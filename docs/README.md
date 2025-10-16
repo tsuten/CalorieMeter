@@ -5,6 +5,7 @@
 - [Documentation](#documentation)
   - [目次](#目次)
   - [構造](#構造)
+  - [アーキテクチャ](#アーキテクチャ)
   - [サーバー起動方法](#サーバー起動方法)
   - [ドキュメント記述のルール](#ドキュメント記述のルール)
   - [コミット時の添付メッセージの書き方](#コミット時の添付メッセージの書き方)
@@ -12,23 +13,35 @@
 
 ## 構造
 
-```
+``` bash
 .
-├── docs          # このreadmeあるとこ
-└── server/CalorieMeter/
-    ├── apps/
-    │   └── [app_name]/
-    │       ├── templates
-    │       ├── views.py
-    │       ├── urls.py
-    │       └── models.py
-    ├── CalorieMeter/
-    │   ├── asgi.py  #非同期サーバー関連の設定なので今回は無視
-    │   ├── urls.py
-    │   ├── settings.py
-    │   └── wsgi.py
-    └── manage.py
+├── docs/                     # このreadmeあるとこ
+│   └── usecase/
+└── server/
+    ├── CalorieMeter
+    │   ├── apps
+    │   │   └── [app_name]
+    │   │       ├── templates/
+    │   │       ├── views.py  # modelを呼び出してtemplateを返す
+    │   │       ├── urls.py   # viewとURLのマッピング
+    │   │       └── models.py # データモデルオブジェクトの定義 + そのオブジェクトに対する操作
+    │   ├── CalorieMeter      # アプリの基盤部分
+    │   │   ├── asgi.py       # 非同期サーバー関連の設定なので今回は無視
+    │   │   ├── urls.py       # URLパスのマッピング
+    │   │   ├── settings.py   # 名前の通りアプリの設定
+    │   │   └── wsgi.py       # 今回使う同期処理サーバーの設定
+    │   └── manage.py
+    └── requirements.txt      # サーバーの起動に必要なモジュール
 ```
+
+## アーキテクチャ
+**リンクは公式 / 信頼できるドキュメントに繋がっています**
+- [Django](https://docs.djangoproject.com/ja/5.2/)
+  - [Django-Unicorn](https://www.django-unicorn.com/docs/)
+- [JavaScript](https://developer.mozilla.org/ja/docs/Web/JavaScript)
+  - [Chart.js](https://www.chartjs.org/docs/latest/)
+  - [TailwindCSS](https://tailwindcss.com)
+- PostgreSQL
 
 ## サーバー起動方法
 
