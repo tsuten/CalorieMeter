@@ -12,6 +12,7 @@ password: string(hashed)
 ``` yaml
 id: uuid
 auth_id: foreign
+avatar: image
 display_name: string
 bio: string
 ```
