@@ -22,9 +22,17 @@
         <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2">
             <i data-lucide="bell" class="w-8 h-8"></i>
         </button>
-        <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2">
-            <i data-lucide="circle-user-round" class="w-8 h-8"></i>
-        </button>
+        <dropdown>
+            <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2" data-bs-toggle="dropdown">
+                <i data-lucide="circle-user-round" class="w-8 h-8"></i>
+            </button>
+            <ul class="dropdown-menu">
+                <li><h6 class="dropdown-header">ダミーの項目</h6></li>
+                <li><a class="dropdown-item" href="#">マイページ</a></li>
+                <li><a class="dropdown-item" href="#">設定</a></li>
+                <li><a class="dropdown-item" href="#">ログアウト</a></li>
+              </ul>
+        </dropdown>
     </div>
 </div>
 
