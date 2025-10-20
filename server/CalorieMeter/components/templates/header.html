@@ -1,0 +1,33 @@
+{% load static %}
+<div class="header flex flex-row items-center justify-center gap-4 border-b border-gray-200 p-2">
+    <div class="flex-1 flex justify-start">
+        <div class="flex flex-row items-center gap-2 rounded-md p-2 hover:cursor-pointer hover:bg-gray-100 rounded-md transition-all duration-100">
+            <img src="{% static 'img/logo.png' %}" alt="logo" class="w-8 h-8 rounded-full">
+            <span class="font-bold text-xl">CalorieMeter</span>
+        </div>
+    </div>
+    <div class="flex-1 flex justify-center gap-2">
+        {% for content in header_contents %}
+        <div class="">
+            <a href="{{ content.href }}" class="btn btn-light border border-gray-500">
+                <button class="flex flex-row items-center gap-2">
+                    <i data-lucide="{{ content.icon }}" class="w-4 h-4"></i>
+                    <span class="">{{ content.label }}</span>
+                </button>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="flex-1 flex justify-end gap-2">
+        <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2">
+            <i data-lucide="bell" class="w-8 h-8"></i>
+        </button>
+        <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2">
+            <i data-lucide="circle-user-round" class="w-8 h-8"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
