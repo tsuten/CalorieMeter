@@ -4,7 +4,6 @@
 ### 認証
 ``` yaml
 id: uuid
-username: string
 email: email
 password: string(hashed)
 ```

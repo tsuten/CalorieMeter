@@ -172,3 +172,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Web frontend
+web
