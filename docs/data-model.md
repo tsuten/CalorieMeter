@@ -23,3 +23,12 @@ bio: string
 id: uuid
 auth_id: foreign
 ```
+
+### 食事
+``` yaml
+id: uuid
+uploaded_by: foreign - auth
+image: image
+calorie: integer
+time_eaten: enum
+```
