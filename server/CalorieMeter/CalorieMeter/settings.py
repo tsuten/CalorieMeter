@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'components',
+    'users',
     'core',
 ]
 
@@ -129,3 +130,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login URL
 LOGIN_URL = '/login'
+
+
+# Users
+AUTH_USERS_MODEL = "users.CustomUsers"
+
+
+# ログイン後/ログアウト後の遷移（任意）
+LOGIN_REDIRECT_URL = "home"   
+LOGOUT_REDIRECT_URL = "login"
