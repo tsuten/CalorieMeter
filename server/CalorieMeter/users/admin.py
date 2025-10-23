@@ -6,9 +6,9 @@ from .models import CustomUser , Profile
 @admin.register(CustomUser)
 class CustomUsersAdmin(BaseUserAdmin):
     model = CustomUser
-    list_display = ( "users_username", "user_email" , "is_staff", "date_joined" )
+    list_display = ( "user_username", "user_email" , "is_staff", "date_joined" )
     search_fields = ("user_username", "user_email")
-    ordering = ("user_joined")
+    ordering = ("date_joined",)
     fieldsets =(
         (None, {"fields": ("user_email", "password")}),
         ("Profile", {"fields": ("user_username", "bio", "avatar")}),
@@ -25,5 +25,5 @@ class CustomUsersAdmin(BaseUserAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "daily_kcal", "height_cm", "weight_kg", "created_at", "avatar")
+    list_display = ("user", "daily_kcal", "height_cm", "weight_kg", "created_at")
     list_select_related = ("user",)

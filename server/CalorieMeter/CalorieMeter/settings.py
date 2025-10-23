@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'components',
     'users',
     'core',
+    'calendars',
 ]
 
 MIDDLEWARE = [
@@ -133,7 +134,7 @@ LOGIN_URL = '/login'
 
 
 # Users
-AUTH_USERS_MODEL = "users.CustomUsers"
+AUTH_USER_MODEL = "users.CustomUser"
 
 
 # ログイン後/ログアウト後の遷移（任意）
