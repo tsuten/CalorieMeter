@@ -30,8 +30,5 @@ id: uuid
 uploaded_by: foreign - auth
 image: image
 calorie: integer
-time_eaten: enum - 食べた時間
+time_eaten: enum
 ```
-
-#### 食べた時間
-朝食, 昼食, 夕食, 間食, その他

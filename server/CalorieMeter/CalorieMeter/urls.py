@@ -24,7 +24,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('components.urls')),
-    path('calendars/', include('calendars.urls')),
 
     # ユーザー（登録やプロフィールなど）
     path("users/", include("users.urls", namespace="users")), 

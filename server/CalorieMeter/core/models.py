@@ -2,14 +2,13 @@ from django.db import models
 from django.conf import settings
 import enum
 
-class TimeEaten(models.TextChoices):
-    breakfast = "朝食"
-    lunch = "昼食"
-    dinner = "夕食"
-    snack = "間食"
-    other = "その他"
+class timeEaten(enum.Enum):
+    breakfast = "breakfast"
+    lunch = "lunch"
+    dinner = "dinner"
+    snack = "snack"
+    other = "other"
 
-# 時間をユーザーが入力できるようにするのもあり
 # Create your models here.
 class Meal(models.Model):
     name = models.CharField(max_length=255)
@@ -22,7 +21,7 @@ class Meal(models.Model):
     # fat = models.IntegerField()
     # carbohydrate = models.IntegerField()
 
-    time_eaten = models.CharField(max_length=255, choices=TimeEaten.choices, null=True, blank=True)
+    datetime_eaten = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
