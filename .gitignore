@@ -175,3 +175,6 @@ dist-ssr
 
 # Web frontend
 web
+
+# devlog
+devlog/
