@@ -178,3 +178,6 @@ web
 
 # devlog
 devlog/
+
+# migration file
+migration/
