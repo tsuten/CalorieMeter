@@ -10,6 +10,6 @@ def upload(request):
 def calendar(request):
     return render(request, 'calendar.html')
 
-@login_required
+# @login_required
 def statistics(request):
     return render(request, 'statistics.html')
