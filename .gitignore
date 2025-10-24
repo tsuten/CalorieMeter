@@ -180,4 +180,4 @@ web
 devlog/
 
 # migration file
-migration/
+migrations/
