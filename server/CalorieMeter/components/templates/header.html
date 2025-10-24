@@ -30,14 +30,14 @@
                 <i data-lucide="bell" class="w-8 h-8"></i>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">通知１</a></li>
-                <li><a class="dropdown-item" href="#">通知２</a></li>
-                <li><a class="dropdown-item" href="#">通知３</a></li>
+                {% for notification in notifications %}
+                <li><a class="dropdown-item" href="#">{{ notification.title }}</a></li>
+                {% endfor %}
               </ul>
         </dropdown>
         <dropdown>
             <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2" data-bs-toggle="dropdown">
-                <i data-lucide="circle-user-round" class="w-8 h-8"></i>
+                <img src="/media/avatars/users_f68eea44-9a37-4b44-a619-11b2c7135665/7e09048fd93b4dffaa3788c3e4d76876.png" alt="avatar" class="w-8 h-8 rounded-full">
             </button>
             <ul class="dropdown-menu">
                 <li><h6 class="dropdown-header">ダミーの項目</h6></li>
