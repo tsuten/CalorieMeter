@@ -142,6 +142,7 @@
 
 <!-- グラデーション背景とコンテナ -->
 <div class="py-8 px-4">
+    {{ data|json_script:"data-json" }}
     <div class="max-w-7xl mx-auto">
         <!-- ヘッダーセクション -->
         <div class="mb-8 text-center">
@@ -164,6 +165,19 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    const data = JSON.parse(document.getElementById('data-json').textContent);
+    const meals = data.meals;
+    
+    // FullCalendarのイベント形式に変換
+    const events = meals.map(meal => ({
+      id: meal.id,
+      title: meal.title,
+      start: meal.date,
+      imageUrl: meal.imageUrl,
+      calories: meal.calories,
+      description: meal.description
+    }));
+    
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
@@ -177,14 +191,7 @@
         today: '今日',
       },
       height: 'auto',
-      // サンプルイベント（実際のデータと置き換えてください）
-      events: [
-        {
-          title: '朝食 🍳',
-          start: '2025-10-15',
-          imageUrl: '/static/img/logo.png'
-        }
-      ],
+      events: events,
       eventContent: function(arg) {
         // 画像URLが設定されている場合のカスタムレンダリング - 画像のみ表示
         if (arg.event.extendedProps.imageUrl) {
