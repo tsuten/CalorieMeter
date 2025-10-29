@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'core',
     'calendars',
     'notifications',
+    'users.first_login',
 ]
 
 MIDDLEWARE = [
@@ -144,4 +145,9 @@ AUTH_USER_MODEL = "users.CustomUser"
 
 # ログイン後/ログアウト後の遷移（任意）
 LOGIN_REDIRECT_URL = "home"   
+LOGOUT_REDIRECT_URL = "login"
+
+
+#初回ログイン時のユーザーの情報の登録
+LOGIN_REDIRECT_URL = "first_login:cheak"   
 LOGOUT_REDIRECT_URL = "login"
