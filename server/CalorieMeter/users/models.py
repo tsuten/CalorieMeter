@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import PermissionsMixin
 
 
 def avatar_upload_path(instance, filename):
@@ -35,10 +36,22 @@ class AuthAccountManager(BaseUserManager):
         # 一般ユーザー作成。is_active以外の権限は特に持たせない
         return self._create_user(email, password, **extra_fields)
 
-    # create_superuser はあえて用意しない（＝superuserいらない）
+    # create_superuser
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_active",True)
+        extra_fields.setdefault("is_staff",True)
+        extra_fields.setdefault("is_superuser",True)
+
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Superuser must have is_staff=True")
+        
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Superuser must have is_super=True")
+
+        return self._create_superuser(email, password, **extra_fields)
 
 
-class AuthAccount(AbstractBaseUser):
+class AuthAccount(AbstractBaseUser , PermissionsMixin):
     """
     認証テーブル（ログイン用）
     仕様：
@@ -59,6 +72,8 @@ class AuthAccount(AbstractBaseUser):
     # AbstractBaseUser が password / last_login を
 
     is_active = models.BooleanField(default=True)  # ログイン可能フラグ
+    is_staff  = models.BooleanField(default=False) # 管理サイトに入る
+
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
     objects = AuthAccountManager()

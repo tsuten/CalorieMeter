@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('components.urls')),
     path('calendars/', include('calendars.urls')),     
-    path('first_login/' , include('users.first_login.urls' , 'first_login') , namespace = 'first_login'),  #初回ログイン時のユーザーの情報登録
+    path('first_login/' , include('users.first_login.urls' , 'first_login') ),  #初回ログイン時のユーザーの情報登録
     path("users/", include("users.urls", namespace="users")),     # ユーザー（登録やプロフィールなど）
 ]
 
