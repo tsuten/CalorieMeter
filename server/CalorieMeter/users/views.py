@@ -8,9 +8,12 @@ from django.shortcuts import render, redirect
 AuthAccount = get_user_model()
 
 
+def register(request):
+    return render(request, "users/register.html")
 
 @require_http_methods(["GET", "POST"])
-def register(request):
+def first_login(request):
+
     if request.method == "POST":
         email = (request.POST.get("email") or "").strip().lower()
         display_name = (request.POST.get("display_name") or "").strip()  # ※今は保存しない（初回ログインで入力）
@@ -46,5 +49,5 @@ def register(request):
         messages.success(request, "登録しました。")
         return redirect("first_login:check")
 
-    # GET
-    return render(request, "users/register.html")
+        # GET
+    return render(request, "users/mypage.html")
