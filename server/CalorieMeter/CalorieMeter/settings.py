@@ -37,11 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_unicorn',
     'components',
     'users',
     'core',
     'calendars',
     'notifications',
+    'food_recognition',
+    # 'users.first_login',
 ]
 
 MIDDLEWARE = [
@@ -148,5 +151,10 @@ LOGOUT_REDIRECT_URL = "login"
 
 
 #初回ログイン時のユーザーの情報の登録
-LOGIN_REDIRECT_URL = "first_login:cheak"   
+LOGIN_REDIRECT_URL = "first_login:check"   
 LOGOUT_REDIRECT_URL = "login"
+
+# Django Unicorn settings
+UNICORN = {
+    "APPS": ["components"],
+}

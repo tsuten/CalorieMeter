@@ -23,6 +23,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('unicorn/', include('django_unicorn.urls')),
     path('', include('components.urls')),
     path('calendars/', include('calendars.urls')),     
     path('first_login/' , include('users.first_login.urls' , 'first_login') ),  #初回ログイン時のユーザーの情報登録
