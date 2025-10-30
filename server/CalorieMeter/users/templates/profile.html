@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}プロフィール{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">プロフィール</h2>
+
+            <form method="post" enctype="multipart/form-data">
+                    <a href="{{ mypage_url }}" class="btn btn-secondary" role="button">マイページに戻る</a>
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">更新</button>
+                    <button type="button" class="btn btn-secondary" onclick="location.href='{{ mypage_url }}'">マイページに戻る</button>
+            </form>
+    <a href="{% url 'users:logout' %}">ログアウト</a>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Menu Page</h1>
+{% if user.is_authenticated %}
+<p>ようこそ、{{ user.display_name }} さん！</p>
+{% else %}
+<p>ようこそ、ゲスト さん！</p>
+{% endif %}
+<ul>
+    <li><a href="{% url 'users:profile' %}">プロフィール</a></li>
+    <li><a href="{% url 'users:logout' %}">ログアウト</a></li>
+</ul>
+
+{% endblock %}
