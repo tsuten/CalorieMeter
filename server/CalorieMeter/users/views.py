@@ -41,7 +41,7 @@ def register(request):
         login(request, user)
 
         if display_name:
-            request.session["first_login_prefill_display_name"] = display_name
+            request.session["first_login_profile_display_name"] = display_name
 
         messages.success(request, "登録しました。")
         return redirect("first_login:check")
