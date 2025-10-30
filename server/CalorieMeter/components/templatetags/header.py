@@ -1,6 +1,6 @@
 from django import template
 from notifications.models import Notification
-from users.models import CustomUser
+from users.models import AuthAccount
 register = template.Library()
 
 @register.inclusion_tag('header.html', takes_context=True)

@@ -4,7 +4,7 @@ from .import views
 app_name = "first_login"
 
 ulrpatterns = [
-    path("cheak/" , views.cheak , name="cheak" ),
+    path("check/" , views.check , name="check" ),
     path("form/" , views.form , name= "form" ),
 ]
 
