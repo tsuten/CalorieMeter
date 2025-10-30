@@ -1,107 +1,183 @@
+
 import os
 import uuid
-
 from django.db import models
-from django.conf import settings
 from django.utils import timezone
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
-
-from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 
 
-# avatarの保存パス: ユーザーごとにディレクトリ分け、UUID名で保存
-def user_avatar_path(instance, filename):
+def avatar_upload_path(instance, filename):
+    """
+    アバター画像の保存先
+    users_{auth_id}/ランダムuuid.拡張子 というパスで保存
+    """
     ext = (os.path.splitext(filename)[1] or ".bin").lower()
-    return f"avatars/users_{instance.pk}/{uuid.uuid4().hex}{ext}"
+    return f"avatars/users_{instance.auth.pk}/{uuid.uuid4().hex}{ext}"
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile"
-    )
-    daily_kcal = models.PositiveIntegerField(default=2000, help_text="1日の目標(kcal)")
-    height_cm = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    weight_kg = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
+class AuthAccountManager(BaseUserManager):
 
-    def __str__(self) -> str:
-        return f"Profile({self.user.user_email})"
-
-
-# 作成時に自動で空のプロフィールを付与
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def ensure_profile(sender, instance, created, **kwargs):
-    if created or not hasattr(instance, "profile"):
-        Profile.objects.get_or_create(user=instance)
-
-
-class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, user_email, password, **extra_fields):
-        if not user_email:
-            raise ValueError("メールアドレス(user_email)は必須です。")
-        email_norm = self.normalize_email(user_email)
-        user = self.model(user_email=email_norm, **extra_fields)
-        user.set_password(password)  # ハッシュ化
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("メールアドレス(email)は必須です。")
+
+        email_norm = self.normalize_email(email)
+
+        user = self.model(email=email_norm, **extra_fields)
+        user.set_password(password)  # 生パス→ハッシュ保存
         user.save(using=self._db)
         return user
 
-    def create_user(self, user_email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", False)
-        extra_fields.setdefault("is_superuser", False)
-        return self._create_user(user_email, password, **extra_fields)
+    def create_user(self, email, password=None, **extra_fields):
+        # 一般ユーザー作成。is_active以外の権限は特に持たせない
+        return self._create_user(email, password, **extra_fields)
 
-    def create_superuser(self, user_email, password=None, **extra_fields):
-        extra_fields.setdefault("is_staff", True)
-        extra_fields.setdefault("is_superuser", True)
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
-        return self._create_user(user_email, password, **extra_fields)
+    # create_superuser はあえて用意しない（＝superuserいらない）
 
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class AuthAccount(AbstractBaseUser):
     """
-    カスタムユーザー
-    - ログインID: user_email
-    - 表示名: user_username（任意）
+    認証テーブル（ログイン用）
+    仕様：
+        - id: uuid
+        - email: email
+        - password: hashed string (AbstractBaseUserが持つ)
     """
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
-    user_email = models.EmailField(
+    email = models.EmailField(
         _("email address"),
         unique=True,
         db_index=True,
         help_text="ログインに使用するメールアドレス",
     )
-    user_username = models.CharField(
-        _("username"),
-        max_length=80,
-        blank=True,
-        help_text="画面に表示する名前（任意）",
-    )
-    bio = models.TextField(_("bio"), blank=True, default="")
-    avatar = models.ImageField(upload_to=user_avatar_path, null=True, blank=True)
 
-    is_active = models.BooleanField(_("active"), default=True)
-    is_staff = models.BooleanField(_("staff status"), default=False)
+    # AbstractBaseUser が password / last_login を
+
+    is_active = models.BooleanField(default=True)  # ログイン可能フラグ
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
-    objects = CustomUserManager()
+    objects = AuthAccountManager()
 
-    USERNAME_FIELD = "user_email"
-    REQUIRED_FIELDS: list[str] = []  # createsuperuser で追加項目なし
+    # DjangoがログインIDとして使うフィールド
+    USERNAME_FIELD = "email"
+
+    # createsuperuserを使わないなら空で
+    REQUIRED_FIELDS: list[str] = []
 
     class Meta:
-        db_table = "auth_custom_user"
-        verbose_name = _("user")
-        verbose_name_plural = _("users")
+        db_table = "auth_account"
+        verbose_name = "認証アカウント"
+        verbose_name_plural = "認証アカウント"
 
-    def __str__(self) -> str:
-        return self.user_username or self.user_email
+    def __str__(self):
+        return self.email
+
+
+class UserProfile(models.Model):
+    """
+    プロフィール（見せる用のユーザー情報）
+        - id: uuid
+        - auth: AuthAccountと1対1 (外部キー = auth_id)
+        - avatar: 画像
+        - display_name: 表示名（ニックネーム）
+        - bio: 自己紹介
+        - height_cm / weight_kg / daily_kcal / target_weight: 身体データなど
+    このレコードは「初回ログイン時(first_login)に作成」する。
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    auth = models.OneToOneField(
+        AuthAccount,
+        on_delete=models.CASCADE,
+        related_name="profile",
+    )
+
+    avatar = models.ImageField(
+        upload_to=avatar_upload_path,
+        null=True,
+        blank=True,
+    )
+
+    display_name = models.CharField(
+        max_length=80,
+        blank=True,
+        help_text="アプリ内で表示される名前（ニックネーム）"
+    )
+
+    bio = models.TextField(
+        blank=True,
+        default="",
+        help_text="自己紹介",
+    )
+
+    height_cm = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="身長(cm)"
+    )
+    weight_kg = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text="体重(kg)"
+    )
+
+    daily_kcal = models.PositiveIntegerField(
+        default=2000,
+        help_text="1日の目標摂取カロリー(kcal)"
+    )
+
+    target_weight = models.PositiveBigIntegerField(
         
+        default=0,
+        help_text="目標体重の設定(kg)"
+    )
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        db_table = "user_profile"
+        verbose_name = "ユーザープロフィール"
+        verbose_name_plural = "ユーザープロフィール"
+
+    def __str__(self):
+        return self.display_name or f"UserProfile({self.auth.email})"
+
+
+class OnboardingStatus(models.Model):
+    """
+    初回ログイン時にプロフィール入力を済ませたかどうか
+    - user: AuthAccountと1対1
+    - is_completed: Trueならもう初回入力フローをスキップ
+    """
+
+    user = models.OneToOneField(
+        AuthAccount,
+        on_delete=models.CASCADE,
+        related_name="onboarding_status",
+    )
+    is_completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = "onboarding_status"
+        verbose_name = "初回登録ステータス"
+        verbose_name_plural = "初回登録ステータス"
+
+    def mark_completed(self):
+        self.is_completed = True
+        self.completed_at = timezone.now()
+        self.save(update_fields=["is_completed", "completed_at"])
+
+    def __str__(self):
+        state = "済" if self.is_completed else "未"
+        return f"Onboarding({self.user.email}): {state}"

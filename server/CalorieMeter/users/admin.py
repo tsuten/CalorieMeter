@@ -1,29 +1,33 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import CustomUser , Profile
+from .models import AuthAccount, UserProfile , OnboardingStatus
 
 
-@admin.register(CustomUser)
-class CustomUsersAdmin(BaseUserAdmin):
-    model = CustomUser
-    list_display = ( "user_username", "user_email" , "is_staff", "date_joined" )
-    search_fields = ("user_username", "user_email")
-    ordering = ("date_joined",)
-    fieldsets =(
-        (None, {"fields": ("user_email", "password")}),
-        ("Profile", {"fields": ("user_username", "bio", "avatar")}),
-        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
-        ("Dates", {"fields": ("date_joined",)}),
+@admin.register(AuthAccount)
+class AuthAccountAdmin(admin.ModelAdmin):
+    list_display = ("email", "is_active", "date_joined")
+    search_fields = ("email",)
+    ordering = ("-date_joined",)
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = (
+        "auth",
+        "display_name",
+        "height_cm",
+        "weight_kg",
+        "daily_kcal",
+        "created_at",
+        "target_weight",
     )
-    add_fieldsets = (
-        (None, {
-            "classes": ("wide",),
-            "fields": ("user_email", "user_username", "password1", "password2", "is_staff", "is_superuser"),
-        }),
-    )
+    list_select_related = ("auth",)
+    search_fields = ("auth__email", "display_name")
+    ordering = ("-created_at",)
 
 
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "daily_kcal", "height_cm", "weight_kg", "created_at")
+@admin.register(OnboardingStatus)
+class OnboardingStatusAdmin(admin.ModelAdmin):
+    list_display = ("user", "is_completed", "completed_at")
     list_select_related = ("user",)
+    search_fields = ("user__email", "user__profile__display_name")
+    ordering = ("-completed_at",)

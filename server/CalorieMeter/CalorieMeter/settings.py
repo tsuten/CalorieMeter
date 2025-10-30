@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'core',
     'calendars',
     'notifications',
-    'users.first_login',
 ]
 
 MIDDLEWARE = [
@@ -140,7 +139,7 @@ LOGIN_URL = '/login'
 
 
 # Users
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.AuthAccount"
 
 
 # ログイン後/ログアウト後の遷移（任意）
