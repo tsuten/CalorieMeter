@@ -26,8 +26,8 @@ urlpatterns = [
     path('unicorn/', include('django_unicorn.urls')),
     path('', include('components.urls')),
     path('calendars/', include('calendars.urls')),     
-    path('first_login/' , include('users.first_login.urls' , 'first_login') ),  #初回ログイン時のユーザーの情報登録
-    path("users/", include("users.urls", namespace="users")),     # ユーザー（登録やプロフィールなど）
+    # path('first_login/' , include('users.first_login.urls' , 'first_login') ),  #初回ログイン時のユーザーの情報登録
+    path("users/", include("users.urls")),     # ユーザー（登録やプロフィールなど）
 ]
 
 if settings.DEBUG:

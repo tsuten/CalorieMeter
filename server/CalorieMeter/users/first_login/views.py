@@ -29,8 +29,8 @@ def check(request):
     _get_or_create_profile(request.user)
     _get_or_create_onboarding_status(request.user)
     if _needs_onboarding(request.user):
-        return redirect("first_login:form")
-    return redirect("home")
+        return redirect("users:first_login_form")
+    return redirect("users:mypage")
 
 @login_required
 @require_http_methods(["GET", "POST"])
@@ -108,7 +108,7 @@ def form(request):
         return redirect("users:profile")
 
     # GET
-    return render(request, "first_login/form.html", {
+    return render(request, "mypage.html", {
         "initial": {
             "display_name": profile.display_name or "",
             "bio": profile.bio or "",

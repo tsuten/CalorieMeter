@@ -1,4 +1,3 @@
-
 from django.contrib import messages
 from django.contrib.auth import login, get_user_model
 from django.views.decorators.http import require_http_methods
@@ -8,17 +7,15 @@ from django.shortcuts import render, redirect
 AuthAccount = get_user_model()
 
 
-def register(request):
-    return render(request, "users/register.html")
-
 @require_http_methods(["GET", "POST"])
-def first_login(request):
+def register(request):
 
     if request.method == "POST":
         email = (request.POST.get("email") or "").strip().lower()
         display_name = (request.POST.get("display_name") or "").strip()  # ※今は保存しない（初回ログインで入力）
         password1 = request.POST.get("password1") or ""
         password2 = request.POST.get("password2") or ""
+        print("登録処理:", email, display_name, password1, password2)
 
         errors = []
         if not email:
@@ -32,14 +29,14 @@ def first_login(request):
         if errors:
             for e in errors:
                 messages.error(request, e)
-            return render(request, "users/register.html")
+            return render(request, "register.html")
 
         # エラーが無ければ作成を試みる（重複メールはここで弾く）
         try:
             user = AuthAccount.objects.create_user(email=email, password=password1)
         except IntegrityError:
             messages.error(request, "このメールアドレスは既に登録されています。")
-            return render(request, "users/register.html")
+            return render(request, "register.html")
 
         login(request, user)
 
@@ -49,5 +46,5 @@ def first_login(request):
         messages.success(request, "登録しました。")
         return redirect("first_login:check")
 
-        # GET
-    return render(request, "users/mypage.html")
+
+    return render(request, "register.html")
