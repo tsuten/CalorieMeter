@@ -93,6 +93,13 @@ class AuthAccount(AbstractBaseUser):
     def __str__(self):
         return self.email
 
+    # Admin/権限用のメソッド　djangoの仕様で必須
+    def has_perm(self, perm, obj=None):
+        return bool(self.is_superuser)
+
+    def has_module_perms(self, app_label):
+        return bool(self.is_superuser or self.is_staff)
+
 
 class UserProfile(models.Model):
     """
