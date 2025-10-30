@@ -48,10 +48,10 @@ class AuthAccountManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_super=True")
 
-        return self._create_superuser(email, password, **extra_fields)
+        return self._create_user(email, password, **extra_fields)
 
 
-class AuthAccount(AbstractBaseUser , PermissionsMixin):
+class AuthAccount(AbstractBaseUser):
     """
     認証テーブル（ログイン用）
     仕様：
@@ -73,6 +73,7 @@ class AuthAccount(AbstractBaseUser , PermissionsMixin):
 
     is_active = models.BooleanField(default=True)  # ログイン可能フラグ
     is_staff  = models.BooleanField(default=False) # 管理サイトに入る
+    is_superuser = models.BooleanField(default=False) # スーパーユーザー
 
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
