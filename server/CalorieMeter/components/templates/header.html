@@ -63,7 +63,10 @@
                 <p>本当にログアウトしますか？</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">ログアウト</button>
+                <form method="post" action="{% url 'users:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">ログアウト</button>
+                </form>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
             </div>
         </div>
