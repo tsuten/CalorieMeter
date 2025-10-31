@@ -138,7 +138,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login URL
-LOGIN_URL = '/login'
+LOGIN_URL = 'users:login'
 
 
 # Users
@@ -147,11 +147,6 @@ AUTH_USER_MODEL = "users.AuthAccount"
 
 # ログイン後/ログアウト後の遷移（任意）
 LOGIN_REDIRECT_URL = "home"   
-LOGOUT_REDIRECT_URL = "login"
-
-
-#初回ログイン時のユーザーの情報の登録
-LOGIN_REDIRECT_URL = "first_login:check"   
 LOGOUT_REDIRECT_URL = "login"
 
 # Django Unicorn settings

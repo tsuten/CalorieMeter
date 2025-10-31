@@ -15,6 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
@@ -28,6 +29,7 @@ urlpatterns = [
     path('calendars/', include('calendars.urls')),     
     # path('first_login/' , include('users.first_login.urls' , 'first_login') ),  #初回ログイン時のユーザーの情報登録
     path("users/", include("users.urls")),     # ユーザー（登録やプロフィールなど）
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]
 
 if settings.DEBUG:

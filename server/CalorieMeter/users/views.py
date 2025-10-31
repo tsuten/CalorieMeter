@@ -1,5 +1,11 @@
 from django.contrib import messages
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import (
+    login as auth_login,
+    logout as auth_logout,
+    authenticate,
+    get_user_model,
+)
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
@@ -38,13 +44,60 @@ def register(request):
             messages.error(request, "このメールアドレスは既に登録されています。")
             return render(request, "register.html")
 
-        login(request, user)
+        auth_login(request, user)
 
         if display_name:
             request.session["first_login_profile_display_name"] = display_name
 
         messages.success(request, "登録しました。")
-        return redirect("first_login:check")
+        return redirect("/")
 
 
     return render(request, "register.html")
+
+
+@login_required
+def mypage(request):
+    return render(request, "mypage.html")
+
+
+@login_required
+def profile(request):
+    from users.models import UserProfile
+    from django.urls import reverse
+    
+    try:
+        user_profile = UserProfile.objects.get(auth=request.user)
+    except UserProfile.DoesNotExist:
+        user_profile = None
+    
+    mypage_url = reverse("users:mypage")
+    return render(request, "profile.html", {
+        "profile": user_profile,
+        "mypage_url": mypage_url,
+    })
+
+@require_http_methods(["GET", "POST"])
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("users:mypage")
+
+    if request.method == "POST":
+        email = (request.POST.get("email") or "").strip().lower()
+        password = request.POST.get("password") or ""
+
+        user = authenticate(request, username=email, password=password)
+        if user is not None:
+            auth_login(request, user)
+            next_url = request.GET.get("next") or request.POST.get("next") or "/"
+            return redirect(next_url)
+
+        messages.error(request, "メールアドレスまたはパスワードが正しくありません。")
+
+    return render(request, "login.html")
+
+
+@login_required
+def logout_view(request):
+    auth_logout(request)
+    return redirect("users:login")
