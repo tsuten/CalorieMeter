@@ -7,19 +7,23 @@ register = template.Library()
 def header(context):
     header_contents = [
         {"label": "Home",
+         "label_ja": "ホーム",
          "icon": "home",
          "href": "/"},
         {"label": "Calendar",
+         "label_ja": "カレンダー",
          "icon": "calendar",
          "href": "/calendars/m/2025/10"},
         {"label": "Statistics",
+         "label_ja": "統計",
          "icon": "bar-chart-3",
          "href": "/statistics"},
         {"label": "History",
+         "label_ja": "履歴",
          "icon": "history",
          "href": "/history"},
     ]
+    user = context['user']
+    notifications = Notification.objects.filter(to_user=user).order_by('-created_at')
 
-    notifications = Notification.objects.filter(to_user=CustomUser.objects.get(id="f68eea44-9a37-4b44-a619-11b2c7135665")).order_by('-created_at')
-
-    return {'header_contents': header_contents, 'notifications': notifications}
+    return {'header_contents': header_contents, 'notifications': notifications, 'user': user}

@@ -2,8 +2,10 @@
 <div class="header flex flex-row items-center justify-center gap-4 border-b border-gray-200 p-2">
     <div class="flex-1 flex justify-start">
         <div class="flex flex-row items-center gap-2 rounded-md p-2 hover:cursor-pointer hover:bg-gray-100 rounded-md transition-all duration-100">
-            <img src="{% static 'img/logo.png' %}" alt="logo" class="w-8 h-8 rounded-full">
-            <span class="font-bold text-xl">CalorieMeter</span>
+            <a href="/" class="text-reset text-decoration-none flex flex-row items-center gap-2">
+                <img src="{% static 'img/logo.png' %}" alt="logo" class="w-8 h-8 rounded-full">
+                <span class="font-bold text-xl">CalorieMeter</span>
+            </a>
         </div>
     </div>
     <div class="flex-1 flex justify-center gap-2">
@@ -12,7 +14,7 @@
             <a href="{{ content.href }}" class="btn btn-light border border-gray-500">
                 <button class="flex flex-row items-center gap-2">
                     <i data-lucide="{{ content.icon }}" class="w-4 h-4"></i>
-                    <span class="">{{ content.label }}</span>
+                    <span class="">{{ content.label_ja }}</span>
                 </button>
             </a>
         </div>
@@ -36,8 +38,8 @@
               </ul>
         </dropdown>
         <dropdown>
-            <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2" data-bs-toggle="dropdown">
-                <img src="/media/avatars/users_f68eea44-9a37-4b44-a619-11b2c7135665/7e09048fd93b4dffaa3788c3e4d76876.png" alt="avatar" class="w-8 h-8 rounded-full">
+            <button class="hover:bg-gray-100 rounded-full hover:cursor-pointer p-2" data-bs-toggle="dropdown">
+                <img src="{{ user.profile.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full">
             </button>
             <ul class="dropdown-menu">
                 <li><h6 class="dropdown-header">ダミーの項目</h6></li>
