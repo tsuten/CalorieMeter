@@ -18,12 +18,6 @@ class MealManager(models.Manager):
         end_date = date(year, month, last_day)
         return self.filter(date_eaten__range=[start_date, end_date])
 
-    def get_total_calories_by_day(self, day, user):
-        return self.filter(date_eaten=day, uploaded_by=user).aggregate(total_calories=models.Sum('calorie'))['total_calories']
-
-    def get_total_amount_of_times_eaten(self, user):
-        return self.filter(uploaded_by=user).aggregate(total_amount=models.Count('id'))['total_amount']
-
 # 時間をユーザーが入力できるようにするのもあり
 # Create your models here.
 class Meal(models.Model):
@@ -36,43 +30,23 @@ class Meal(models.Model):
     # protein = models.IntegerField()
     # fat = models.IntegerField()
     # carbohydrate = models.IntegerField()
+
+    date_eaten = models.DateField(null=True, blank=True)
+    time_eaten = models.CharField(max_length=255, choices=TimeEaten.choices, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     objects = MealManager()
 
     def __str__(self):
-        return self.uploaded_by.email + " - " + self.name
+        return self.uploaded_by.user_email + " - " + self.name
 
     def to_dict(self):
         return {
             'id': self.id,
             'title': self.name,
             'date': self.date_eaten.isoformat(),
-            'time': self.time_eaten,
             'imageUrl': self.image.url if self.image else None,
             'calories': self.calorie,
-            'memo': self.memo
+            'description': self.time_eaten
         }
-
-class DishManager(models.Manager):
-    def get_meals_by_dish(self, dish, user):
-        return Meal.objects.get(id=dish, user=user)
-
-class Dish(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    meals = models.ManyToManyField(Meal, related_name='dishes')
-    date_eaten = models.DateField(null=True, blank=True)
-    time_eaten = models.CharField(max_length=255, choices=TimeEaten.choices, null=True, blank=True)
-    memo = models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def get_meals(self):
-        print(self.meals.all())
-        return self.meals.all()
-
-    objects = DishManager()
-
-    def __str__(self):
-        return self.user.email + " - " + self.date_eaten.isoformat()
