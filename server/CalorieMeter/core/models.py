@@ -35,7 +35,7 @@ class Meal(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='meals/')
     memo = models.TextField(null=True, blank=True)
-# 栄養素
+    # 栄養素
     calorie = models.IntegerField()
     
     # 後々追加する予定のデータ
@@ -54,7 +54,9 @@ class Meal(models.Model):
             'name': self.name,
             't_date': self.date_eaten.isoformat(),
             't_time': self.time_eaten,
-            'imageUrl': self.image.url if self.image else None,
+            'createdAt': self.created_at.isoformat(),
+            'updatedAt': self.updated_at.isoformat(),
+            'imagePath': self.image.url if self.image else None,
             'memo': self.memo,
             'calories': self.calorie,
         }

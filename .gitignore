@@ -179,5 +179,7 @@ web
 # devlog
 devlog/
 
-# migration file
-migrations/
+# # migration file
+# # データベース構築用
+# # マイグレーション後に再度追跡する場合はコメントアウトを外す
+# migrations/
