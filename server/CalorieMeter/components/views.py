@@ -7,9 +7,11 @@ import os
 import uuid
 from core.models import Meal
 from users.models import AuthAccount
+from users.decorator import login_required_chack_user_prfile
 # from .utils import classify_food_image
 # Create your views here.
-@login_required
+
+@login_required_chack_user_prfile
 def index(request):
     return render(request, 'index.html')
 
