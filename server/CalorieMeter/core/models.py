@@ -29,43 +29,35 @@ class MealManager(models.Manager):
 class Meal(models.Model):
     name = models.CharField(max_length=255)
     uploaded_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    date_eaten = models.DateField(null=True, blank=True)
+    time_eaten = models.CharField(max_length=255, choices=TimeEaten.choices, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='meals/')
+    memo = models.TextField(null=True, blank=True)
+# 栄養素
     calorie = models.IntegerField()
     
     # 後々追加する予定のデータ
     # protein = models.IntegerField()
     # fat = models.IntegerField()
     # carbohydrate = models.IntegerField()
-    date_eaten = models.DateField(null=True, blank=True)
-    time_eaten = models.CharField(max_length=255, choices=TimeEaten.choices, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
+    
     objects = MealManager()
 
     def __str__(self):
         return self.uploaded_by.email + " - " + self.name
 
-    # def to_dict(self):
-    #     return {
-    #         'id': self.id,
-    #         'title': self.name,
-    #         'date': self.date_eaten.isoformat(),
-    #         'time': self.time_eaten,
-    #         'imageUrl': self.image.url if self.image else None,
-    #         'calories': self.calorie,
-    #         'memo': self.memo
-    #     }
-    
-    #     def to_dict(self):
-    #     return {
-    #         'id': self.id,
-    #         'title': self.name,
-    #         'date': self.date_eaten.isoformat(),
-    #         'imageUrl': self.image.url if self.image else None,
-    #         'calories': self.calorie,
-    #         'description': self.time_eaten
-    #     }
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            't_date': self.date_eaten.isoformat(),
+            't_time': self.time_eaten,
+            'imageUrl': self.image.url if self.image else None,
+            'memo': self.memo,
+            'calories': self.calorie,
+        }
     
 
 class DishManager(models.Manager):
