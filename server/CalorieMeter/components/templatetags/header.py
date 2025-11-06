@@ -24,6 +24,10 @@ def header(context):
          "href": "/history"},
     ]
     user = context['user']
+    
+    if not user.is_authenticated:
+        return {'header_contents': header_contents, 'user': None, 'notifications': []}
+
     notifications = Notification.objects.filter(to_user=user).order_by('-created_at')
 
     return {'header_contents': header_contents, 'notifications': notifications, 'user': user}
