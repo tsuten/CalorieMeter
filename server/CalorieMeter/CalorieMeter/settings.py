@@ -151,5 +151,5 @@ LOGOUT_REDIRECT_URL = "login"
 
 # Django Unicorn settings
 UNICORN = {
-    "APPS": ["components"],
+    "APPS": ["components", "users"],
 }

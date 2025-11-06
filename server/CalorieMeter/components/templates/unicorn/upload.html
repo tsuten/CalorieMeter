@@ -1,0 +1,60 @@
+{% load static %}
+<div>
+    <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data" class="flex flex-col items-center justify-center gap-2">
+        {% csrf_token %}
+                <div id="imagePreview" style="display: none;" class="mt-4">
+                <h3>選択された画像:</h3>
+                <img id="previewImg" src="" alt="プレビュー画像" class="max-w-md rounded-lg shadow-lg">
+                </div>
+        <input type="file" name="file" id="fileInput" class="form-control" accept="image/*">
+        
+        <button type="submit" id="uploadButton" class="btn btn-primary form-control" disabled>アップロード</button>
+        
+        {% if uploaded_image_url %}
+        <div class="mt-4">
+            <h3>アップロードされた画像:</h3>
+            <img src="{{ uploaded_image_url }}" alt="アップロードされた画像" class="max-w-md rounded-lg shadow-lg">
+        </div>
+        <button type="button" unicorn:click="submit" class="btn btn-success form-control mt-2">画像を処理する</button>
+        {% endif %}
+    </form>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const uploadButton = document.getElementById('uploadButton');
+        
+        // ファイル選択時の処理
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                const file = this.files[0];
+                
+                // ファイルが画像かチェック
+                if (file.type.startsWith('image/')) {
+                    // FileReaderで画像を読み込んでプレビュー表示
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        imagePreview.style.display = 'block';
+                        // アップロードボタンを有効化
+                        uploadButton.disabled = false;
+                    };
+                    
+                    reader.readAsDataURL(file);
+                } else {
+                    alert('画像ファイルを選択してください');
+                    fileInput.value = '';
+                    imagePreview.style.display = 'none';
+                    uploadButton.disabled = true;
+                }
+            } else {
+                imagePreview.style.display = 'none';
+                uploadButton.disabled = true;
+            }
+        });
+    });
+    </script>
+</div>
