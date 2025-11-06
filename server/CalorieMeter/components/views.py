@@ -9,19 +9,13 @@ from core.models import Meal
 from users.models import AuthAccount
 # from .utils import classify_food_image
 # Create your views here.
-@login_required
 def index(request):
     return render(request, 'index.html')
 
 class UploadView(View):
-    @login_required
     def get(self, request):
         user = AuthAccount.objects.get(id="47a2978c-9294-4179-86ac-878a7e41501b")
         meals = Meal.objects.filter(uploaded_by=user).order_by('-created_at')
-        for meal in meals:
-            if meal.date_eaten is None and meal.time_eaten is None:
-                meal.date_eaten = "未記入"
-                meal.time_eaten = ""
         return render(request, 'upload.html', {'meals': meals})
     
     def post(self, request):
@@ -59,7 +53,7 @@ class UploadView(View):
 def calendar(request):
     return render(request, 'calendar.html')
 
-@login_required
+# @login_required
 def statistics(request):
     return render(request, 'statistics.html')
 

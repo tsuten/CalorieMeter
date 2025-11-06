@@ -159,24 +159,6 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class="modal" id="mealModal" tabindex="-1" aria-labelledby="mealModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="mealModalLabel">食事詳細</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>put something here</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">詳細を見る</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     lucide.createIcons();
 </script>
@@ -227,8 +209,7 @@
         return { html: `<span class="event-text">${arg.event.title}</span>` };
       },
       eventClick: function(info) {
-        const modal = new bootstrap.Modal(document.getElementById('mealModal'));
-        modal.show();
+        alert('something happens');
       }
     });
     calendar.render();
