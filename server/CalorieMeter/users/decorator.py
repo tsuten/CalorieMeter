@@ -2,11 +2,11 @@
 from functools import wraps
 from django.shortcuts import redirect 
 from django.urls import reverse
-from .models import UserProfile , OnboardingStatus
+from .models import UserProfile, OnboardingStatus
 
 from django.contrib.auth.views import redirect_to_login
 
-def login_required_chack_user_prfile(views_func):# カスタマイズ部分（関数名）
+def login_required_check_user_profile(views_func):# カスタマイズ部分（関数名）
     """
     初回ログイン時の登録してない場合
     """

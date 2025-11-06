@@ -7,17 +7,17 @@ import os
 import uuid
 from core.models import Meal
 from users.models import AuthAccount
-from users.decorator import login_required_chack_user_prfile
+from users.decorator import login_required_check_user_profile
 # from .utils import classify_food_image
 # Create your views here.
 
-@login_required_chack_user_prfile
+@login_required_check_user_profile
 def index(request):
     return render(request, 'index.html')
 
 class UploadView(View):
     def get(self, request):
-        user = AuthAccount.objects.get(id="47a2978c-9294-4179-86ac-878a7e41501b")
+        user = AuthAccount.objects.get(id=request.user.id)
         meals = Meal.objects.filter(uploaded_by=user).order_by('-created_at')
         return render(request, 'upload.html', {'meals': meals})
     
