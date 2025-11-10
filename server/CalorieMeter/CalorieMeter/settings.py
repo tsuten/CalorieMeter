@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'core',
     'calendars',
     'notifications',
-    'food_recognition',
+    # 'food_recognition',
     # 'users.first_login',
 ]
 
