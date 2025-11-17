@@ -3,3 +3,21 @@ Django==5.2.6
 pillow==12.0.0
 sqlparse==0.5.3
 django-unicorn==0.62.0
+
+# === AIモデル関連 ===
+torch>=2.0.0              # PyTorch本体（Hugging Faceモデルの推論用）
+transformers>=4.38.0      # Hugging Face Transformersライブラリ
+accelerate>=0.30.0        # 推論高速化とデバイス管理（CPU/GPU切替を自動で最適化）
+safetensors>=0.4.2        # モデルの安全で高速な読み込み形式
+
+# === 画像処理関連 ===
+opencv-python>=4.9.0.80   # 画像の前処理（解析前にリサイズや補正を行う場合に必要）
+numpy>=1.26.0             # 数値計算ライブラリ（torchや画像処理で必須）
+
+# === API通信・クラウド連携用 ===
+requests>=2.32.3          # 外部API通信（SageMaker連携時に使用）
+boto3>=1.34.100           # AWS連携（S3やSageMaker利用を見据えて追加）
+
+# === モデル管理・キャッシュ ===
+huggingface-hub>=0.23.0   # モデルのダウンロード・キャッシュ管理
+tqdm>=4.66.4              # モデルのダウンロードや解析時の進行状況バー表示

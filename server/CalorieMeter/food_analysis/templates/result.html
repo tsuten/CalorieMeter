@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="container">
+    <h1>画像解析結果</h1>
+
+    <div class="record-card">
+      <h2>記録 ID: {{ record.record_id }}</h2>
+
+      {% if record.image %}
+        <div class="record-image">
+          <img src="{{ record.image.url }}" alt="Food image" style="max-width:100%;height:auto;" />
+        </div>
+      {% endif %}
+
+      <dl>
+        <dt>推定食品</dt>
+        <dd>{{ analysis.predicted_food }}</dd>
+
+        <dt>信頼度</dt>
+        <dd>{{ analysis.confidence|floatformat:2 }}</dd>
+
+        <dt>解析日時</dt>
+        <dd>{% if analysis.analyzed_at %}{{ analysis.analyzed_at }}{% else %}-{% endif %}</dd>
+      </dl>
+
+      <h3>栄養素（概算）</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>栄養素</th>
+            <th>値</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key, val in analysis.nutrients.items %}
+            <tr>
+              <td>{{ key }}</td>
+              <td>{{ val }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="2">データがありません</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <p>
+        <a href="/" class="btn">トップへ戻る</a>
+      </p>
+    </div>
+  </div>
+{% endblock %}

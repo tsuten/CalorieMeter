@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load unicorn %}
+{% block content %}
+{% csrf_token %}
+
+<style>
+    .hidden { display: none; }
+</style>
+
+<div class="">
+    <h1>食事を記録する</h1>
+
+    <!-- 切替ボタン -->
+    <div class="flex flex-col items-center justify-center gap-4 mb-4">
+        <div class="btn-group" role="group">
+            <button id="uploadModeBtn" class="btn btn-primary">画像アップロード</button>
+            <button id="cameraModeBtn" class="btn btn-outline-primary">カメラ起動</button>
+        </div>
+    </div>
+
+    <!-- アップロードモード -->
+    <div id="uploadMode" class="flex flex-col items-center justify-center h-128 border border-gray-200 rounded-md p-4 mx-64">
+        <i data-lucide="upload" class="w-32 h-32 text-gray-500" style="stroke-width: 1.0;"></i>
+        <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data" class="flex flex-col items-center justify-center gap-2">
+            {% csrf_token %}
+            <input type="file" name="image_path" accept="image/*" class="form-control">
+            <button type="submit" class="btn btn-primary form-control">アップロード</button>
+        </form>
+    </div>
+
+    <!-- カメラモード -->
+    <div id="cameraMode" class="hidden flex flex-col items-center justify-center h-128 border border-gray-200 rounded-md p-4 mx-64">
+        <video id="webcam" autoplay playsinline width="320" height="240"></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <div class="flex gap-2 mt-2">
+            <button id="startButton" class="btn btn-success">開始</button>
+            <button id="stopButton" class="btn btn-danger">停止</button>
+            <button id="captureButton" class="btn btn-primary">キャプチャ</button>
+        </div>
+        <div id="imagePreview" style="display: none;" class="mt-4">
+            <h3>撮影プレビュー:</h3>
+            <img id="previewImg" src="" alt="プレビュー" class="max-w-md rounded-lg shadow-lg">
+        </div>
+    </div>
+</div>
+
+<!-- 過去の食事履歴 -->
+<div class="container my-4">
+    <h2 class="h5 mb-3">過去の食事</h2>
+    <ul class="list-group">
+        {% for meal in meals %}
+        <li class="list-group-item">
+            <div class="d-flex align-items-center gap-3">
+                <img src="{{ meal.image.url }}" alt="{{ meal.name }}" class="rounded" style="width:64px;height:64px;object-fit:cover;">
+                <div class="flex-grow-1">
+                    <div class="fw-semibold">{{ meal.name }}</div>
+                    <div class="d-flex justify-content-between align-items-center mt-1">
+                        <div class="text-muted small d-flex align-items-center gap-2">
+                            {{ meal.date_eaten|default:"" }} {{ meal.time_eaten|default:"" }}
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if meal.calorie %}
+                            <span class="badge text-bg-light">{{ meal.calorie }} kcal</span>
+                            {% endif %}
+                            {% if meal.memo %}
+                            <span class="text-muted small text-truncate" style="max-width: 240px;">{{ meal.memo }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <a href="/meal-info/{{ meal.id|default:0 }}" class="btn btn-sm btn-outline-secondary">詳細</a>
+            </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">記録がありません</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/webcam-easy@1.1.1/dist/webcam-easy.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    lucide.createIcons();
+
+    const uploadMode = document.getElementById('uploadMode');
+    const cameraMode = document.getElementById('cameraMode');
+    const uploadModeBtn = document.getElementById('uploadModeBtn');
+    const cameraModeBtn = document.getElementById('cameraModeBtn');
+
+    const webcamElement = document.getElementById('webcam');
+    const canvasElement = document.getElementById('canvas');
+    const webcam = new Webcam(webcamElement, 'user', canvasElement);
+
+    // 切替（アップロード）
+    uploadModeBtn.addEventListener('click', () => {
+        uploadMode.style.display = 'flex';
+        cameraMode.style.display = 'none';
+        uploadModeBtn.classList.add('btn-primary');
+        uploadModeBtn.classList.remove('btn-outline-primary');
+        cameraModeBtn.classList.remove('btn-primary');
+        cameraModeBtn.classList.add('btn-outline-primary');
+        webcam.stop();
+    });
+
+    // モード切替（カメラ）
+    cameraModeBtn.addEventListener('click', () => {
+        uploadMode.style.display = 'none';
+        cameraMode.style.display = 'flex';
+        cameraModeBtn.classList.add('btn-primary');
+        cameraModeBtn.classList.remove('btn-outline-primary');
+        uploadModeBtn.classList.remove('btn-primary');
+        uploadModeBtn.classList.add('btn-outline-primary');
+    });
+
+    // カメラ操作
+    document.getElementById('startButton').addEventListener('click', async () => {
+        await webcam.start();
+    });
+
+    document.getElementById('stopButton').addEventListener('click', () => {
+        webcam.stop();
+    });
+
+    document.getElementById('captureButton').addEventListener('click', () => {
+        const result = webcam.snap();
+        document.getElementById('previewImg').src = result;
+        document.getElementById('imagePreview').style.display = 'block';
+    });
+});
+</script>
+
+{% endblock %}

@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 
-
+# アバター写真の保存先パス　権限なく登録できず
 def avatar_upload_path(instance, filename):
     """
     アバター画像の保存先

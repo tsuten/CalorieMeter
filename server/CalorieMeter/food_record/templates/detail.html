@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>解析結果</h2>
+<p>予測: {{ rec.predicted_label }} ({{ rec.confidence }})</p>
+<p>カロリー: {{ rec.calories }} kcal</p>
+<p>タンパク質: {{ rec.protein_g }} g</p>
+<h3>提案</h3>
+<ul>
+  {% for s in suggestions %}
+    <li><strong>{{ s.title }}</strong>: {{ s.description }} (推定カロリー: {{ s.estimated_calories }})</li>
+  {% endfor %}
+</ul>
+{% endblock %}

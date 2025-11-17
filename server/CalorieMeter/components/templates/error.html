@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container d-flex justify-content-center align-items-center" style="height: 80vh;">
+    <div class="card p-4">
+        <h2 class="mb-4">エラーが発生しました</h2>
+        <div class="alert alert-danger" role="alert">
+            {{ error_message|default:"予期しないエラーが発生しました。" }}
+        </div>
+        <a href="{% url 'users:index' %}" class="btn btn-primary">トップページに戻る</a>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{# Bootstrap JS is loaded only if needed for this page #}
+{% endblock %}

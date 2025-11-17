@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie Meter - Goal Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+ 
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+ 
+        /* Header */
+        .header {
+            background: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+ 
+        .app-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+ 
+        /* Notification Button */
+        .notification-btn {
+            position: relative;
+            background: #f0f0f0;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+ 
+        .notification-btn:hover {
+            background: #e0e0e0;
+        }
+ 
+        .notification-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            border: 2px solid white;
+        }
+ 
+        .notification-badge.hidden {
+            display: none;
+        }
+ 
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 350px;
+            max-height: 500px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+        }
+ 
+        .notification-dropdown.show {
+            display: flex;
+        }
+ 
+        .notification-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+ 
+        .notification-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+ 
+        .mark-all-read {
+            background: none;
+            border: none;
+            color: #3498db;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+ 
+        .mark-all-read:hover {
+            text-decoration: underline;
+        }
+ 
+        .notification-list {
+            overflow-y: auto;
+            max-height: 400px;
+        }
+ 
+        .notification-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+            position: relative;
+        }
+ 
+        .notification-item:hover {
+            background: #f9f9f9;
+        }
+ 
+        .notification-item.unread {
+            background: #f0f7ff;
+        }
+ 
+        .notification-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #3498db;
+        }
+ 
+        .notification-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+ 
+        .notification-item.goal-complete .notification-icon {
+            background: #d4edda;
+            color: #28a745;
+        }
+ 
+        .notification-item.goal-close .notification-icon {
+            background: #fff3cd;
+            color: #ffc107;
+        }
+ 
+        .notification-content {
+            flex: 1;
+        }
+ 
+        .notification-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+ 
+        .notification-message {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+ 
+        .notification-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+ 
+        .notification-delete {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+ 
+        .notification-item:hover .notification-delete {
+            opacity: 1;
+        }
+ 
+        .notification-delete:hover {
+            color: #e74c3c;
+        }
+ 
+        .notification-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: #999;
+            font-size: 14px;
+        }
+ 
+        /* Main Content */
+        .main-content {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+ 
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+ 
+        .goal-section {
+            margin-bottom: 30px;
+        }
+ 
+        .goal-input-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+ 
+        .goal-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+ 
+        .goal-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+ 
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #3498db;
+            color: white;
+        }
+ 
+        .btn:hover {
+            background: #2980b9;
+        }
+ 
+        .btn-secondary {
+            background: #95a5a6;
+        }
+ 
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+ 
+        .current-goal {
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+ 
+        .current-goal-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+ 
+        .current-goal-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+ 
+        /* Progress Section */
+        .progress-section {
+            margin-bottom: 30px;
+        }
+ 
+        .progress-bar-container {
+            background: #e0e0e0;
+            height: 30px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            position: relative;
+        }
+ 
+        .progress-bar {
+            height: 100%;
+            background: #3498db;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+ 
+        .progress-bar.complete {
+            background: #28a745;
+        }
+ 
+        .progress-bar.close {
+            background: #ffc107;
+        }
+ 
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #666;
+        }
+ 
+        .calorie-input-group {
+            display: flex;
+            gap: 12px;
+        }
+ 
+        .calorie-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+ 
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 999;
+            display: none;
+        }
+ 
+        .overlay.show {
+            display: block;
+        }
+ 
+        @media (max-width: 600px) {
+            .notification-dropdown {
+                width: calc(100vw - 40px);
+                right: -20px;
+            }
+ 
+            .goal-input-group,
+            .calorie-input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="app-title">Calorie Meter</div>
+            <div style="position: relative;">
+                <button class="notification-btn" id="notificationBtn" onclick="toggleNotifications()">
+                    🔔
+                    <span class="notification-badge hidden" id="notificationBadge">0</span>
+                </button>
+               
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="mark-all-read" onclick="markAllAsRead()">Mark all read</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="notification-empty">No notifications</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+ 
+        <div class="overlay" id="overlay" onclick="closeNotifications()"></div>
+ 
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Goal Setting -->
+            <div class="goal-section">
+                <h2 class="section-title">Set Daily Goal</h2>
+                <div class="current-goal" id="currentGoalDisplay" style="display: none;">
+                    <div class="current-goal-text">Today's Goal:</div>
+                    <div class="current-goal-value" id="currentGoalValue">0</div>
+                </div>
+                <div class="goal-input-group">
+                    <input
+                        type="number"
+                        class="goal-input"
+                        id="goalInput"
+                        placeholder="Enter daily calorie goal (e.g., 2000)"
+                        min="1"
+                    >
+                    <button class="btn" onclick="setGoal()">Set Goal</button>
+                </div>
+            </div>
+ 
+            <!-- Progress Tracker -->
+            <div class="progress-section">
+                <h2 class="section-title">Today's Progress</h2>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+                </div>
+                <div class="progress-info">
+                    <span>Consumed: <strong id="consumedCalories">0</strong> cal</span>
+                    <span>Goal: <strong id="goalCalories">0</strong> cal</span>
+                </div>
+                <div class="calorie-input-group" style="margin-top: 16px;">
+                    <input
+                        type="number"
+                        class="calorie-input"
+                        id="calorieInput"
+                        placeholder="Add calories consumed"
+                        min="0"
+                    >
+                    <button class="btn" onclick="addCalories()">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+        // State
+        let dailyGoal = 0;
+        let consumedCalories = 0;
+        let notifications = [];
+        let notificationIdCounter = 0;
+        let goalCloseNotificationSent = false;
+        let goalCompleteNotificationSent = false;
+ 
+        // Load from localStorage
+        function loadData() {
+            const savedGoal = localStorage.getItem('dailyGoal');
+            const savedConsumed = localStorage.getItem('consumedCalories');
+            const savedNotifications = localStorage.getItem('notifications');
+           
+            if (savedGoal) {
+                dailyGoal = parseInt(savedGoal);
+                document.getElementById('goalInput').value = dailyGoal;
+                document.getElementById('currentGoalDisplay').style.display = 'block';
+                document.getElementById('currentGoalValue').textContent = dailyGoal;
+                document.getElementById('goalCalories').textContent = dailyGoal;
+            }
+           
+            if (savedConsumed) {
+                consumedCalories = parseInt(savedConsumed);
+                document.getElementById('consumedCalories').textContent = consumedCalories;
+            }
+           
+            if (savedNotifications) {
+                notifications = JSON.parse(savedNotifications);
+                notificationIdCounter = notifications.length > 0 ? Math.max(...notifications.map(n => n.id)) : 0;
+                renderNotifications();
+                updateBadge();
+            }
+           
+            updateProgress();
+        }
+ 
+        // Save to localStorage
+        function saveData() {
+            localStorage.setItem('dailyGoal', dailyGoal);
+            localStorage.setItem('consumedCalories', consumedCalories);
+            localStorage.setItem('notifications', JSON.stringify(notifications));
+        }
+ 
+        // Set Goal
+        function setGoal() {
+            const input = document.getElementById('goalInput');
+            const goal = parseInt(input.value);
+           
+            if (isNaN(goal) || goal <= 0) {
+                alert('Please enter a valid goal (greater than 0)');
+                return;
+            }
+           
+            dailyGoal = goal;
+            goalCloseNotificationSent = false;
+            goalCompleteNotificationSent = false;
+           
+            document.getElementById('currentGoalDisplay').style.display = 'block';
+            document.getElementById('currentGoalValue').textContent = dailyGoal;
+            document.getElementById('goalCalories').textContent = dailyGoal;
+           
+            input.value = '';
+            saveData();
+            updateProgress();
+           
+            addNotification('info', 'Goal Set', `Daily goal set to ${dailyGoal} calories`, 'Just now');
+        }
+ 
+        // Add Calories
+        function addCalories() {
+            if (dailyGoal === 0) {
+                alert('Please set a daily goal first');
+                return;
+            }
+           
+            const input = document.getElementById('calorieInput');
+            const calories = parseInt(input.value);
+           
+            if (isNaN(calories) || calories < 0) {
+                alert('Please enter a valid number');
+                return;
+            }
+           
+            consumedCalories += calories;
+            document.getElementById('calorieInput').value = '';
+            saveData();
+            updateProgress();
+            checkGoalStatus();
+        }
+ 
+        // Update Progress
+        function updateProgress() {
+            if (dailyGoal === 0) {
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('progressBar').textContent = '0%';
+                return;
+            }
+           
+            const percentage = Math.min((consumedCalories / dailyGoal) * 100, 100);
+            const progressBar = document.getElementById('progressBar');
+           
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = Math.round(percentage) + '%';
+           
+            document.getElementById('consumedCalories').textContent = consumedCalories;
+            document.getElementById('goalCalories').textContent = dailyGoal;
+           
+            // Update progress bar color
+            progressBar.classList.remove('complete', 'close');
+            if (consumedCalories >= dailyGoal) {
+                progressBar.classList.add('complete');
+            } else if (percentage >= 80) {
+                progressBar.classList.add('close');
+            }
+        }
+ 
+        // Check Goal Status and Send Notifications
+        function checkGoalStatus() {
+            if (dailyGoal === 0) return;
+           
+            const percentage = (consumedCalories / dailyGoal) * 100;
+           
+            // Goal completed notification
+            if (consumedCalories >= dailyGoal && !goalCompleteNotificationSent) {
+                addNotification('goal-complete', 'Goal Completed! 🎉',
+                    `Congratulations! You've reached your daily goal of ${dailyGoal} calories.`,
+                    'Just now');
+                goalCompleteNotificationSent = true;
+            }
+           
+            // Goal close notification (80% or more)
+            if (percentage >= 80 && percentage < 100 && !goalCloseNotificationSent && !goalCompleteNotificationSent) {
+                const remaining = dailyGoal - consumedCalories;
+                addNotification('goal-close', 'Goal Almost Reached!',
+                    `You're close to your goal! Only ${remaining} calories remaining.`,
+                    'Just now');
+                goalCloseNotificationSent = true;
+            }
+        }
+ 
+        // Notification Functions
+        function addNotification(type, title, message, time) {
+            const notification = {
+                id: ++notificationIdCounter,
+                type: type,
+                title: title,
+                message: message,
+                time: time,
+                read: false
+            };
+           
+            notifications.unshift(notification);
+            renderNotifications();
+            updateBadge();
+            saveData();
+        }
+ 
+        function removeNotification(id) {
+            notifications = notifications.filter(n => n.id !== id);
+            renderNotifications();
+            updateBadge();
+            saveData();
+        }
+ 
+        function markAsRead(id) {
+            const notification = notifications.find(n => n.id === id);
+            if (notification) {
+                notification.read = true;
+                renderNotifications();
+                updateBadge();
+                saveData();
+            }
+        }
+ 
+        function markAllAsRead() {
+            notifications.forEach(n => n.read = true);
+            renderNotifications();
+            updateBadge();
+            saveData();
+        }
+ 
+        function renderNotifications() {
+            const list = document.getElementById('notificationList');
+           
+            if (notifications.length === 0) {
+                list.innerHTML = '<div class="notification-empty">No notifications</div>';
+                return;
+            }
+ 
+            list.innerHTML = notifications.map(notification => {
+                const icons = {
+                    'goal-complete': '✓',
+                    'goal-close': '⚠',
+                    'info': 'ℹ'
+                };
+ 
+                return `
+                    <div class="notification-item ${notification.type} ${notification.read ? '' : 'unread'}"
+                         onclick="markAsRead(${notification.id})">
+                        <div class="notification-icon">${icons[notification.type] || '•'}</div>
+                        <div class="notification-content">
+                            <div class="notification-title">${escapeHtml(notification.title)}</div>
+                            <div class="notification-message">${escapeHtml(notification.message)}</div>
+                            <div class="notification-time">${escapeHtml(notification.time)}</div>
+                        </div>
+                        <button class="notification-delete" onclick="event.stopPropagation(); removeNotification(${notification.id})">×</button>
+                    </div>
+                `;
+            }).join('');
+        }
+ 
+        function updateBadge() {
+            const badge = document.getElementById('notificationBadge');
+            const unreadCount = notifications.filter(n => !n.read).length;
+           
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+ 
+        function toggleNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const btn = document.getElementById('notificationBtn');
+            const overlay = document.getElementById('overlay');
+           
+            const isOpen = dropdown.classList.contains('show');
+           
+            if (isOpen) {
+                closeNotifications();
+            } else {
+                dropdown.classList.add('show');
+                overlay.classList.add('show');
+            }
+        }
+ 
+        function closeNotifications() {
+            const dropdown = document.getElementById('notificationDropdown');
+            const overlay = document.getElementById('overlay');
+           
+            dropdown.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+ 
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+ 
+        // Allow Enter key to submit
+        document.getElementById('goalInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') setGoal();
+        });
+ 
+        document.getElementById('calorieInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') addCalories();
+        });
+ 
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>

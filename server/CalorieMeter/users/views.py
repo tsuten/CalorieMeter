@@ -12,6 +12,8 @@ from django.shortcuts import render, redirect
 
 AuthAccount = get_user_model()
 
+def index(request):  # ログアウト時に遷移
+    return render(request, "index.html")
 
 @require_http_methods(["GET", "POST"])
 def register(request):
@@ -40,6 +42,7 @@ def register(request):
         # エラーが無ければ作成を試みる（重複メールはここで弾く）
         try:
             user = AuthAccount.objects.create_user(email=email, password=password1)
+        
         except IntegrityError:
             messages.error(request, "このメールアドレスは既に登録されています。")
             return render(request, "register.html")

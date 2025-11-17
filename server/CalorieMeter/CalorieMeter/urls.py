@@ -28,8 +28,10 @@ urlpatterns = [
     path('', include('components.urls')),
     path('calendars/', include('calendars.urls')),     
     # path('first_login/' , include('users.first_login.urls' , 'first_login') ),  #初回ログイン時のユーザーの情報登録
-    path("users/", include("users.urls")),     # ユーザー（登録やプロフィールなど）
+    path("users/", include("users.urls")), # ユーザー（登録やプロフィールなど）
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('food_record/', include('food_record.urls')),
+    path('food_analysis/', include('food_analysis.urls')),
 ]
 
 if settings.DEBUG:
