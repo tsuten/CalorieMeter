@@ -14,7 +14,8 @@
 </head>
 <body>
     {% header %}
-    {% block content %}{% endblock %}
+    {% block content %}
     {% csrf_token %}
+    {% endblock %}
 </body>
 </html>

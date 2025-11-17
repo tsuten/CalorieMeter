@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+  <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center mb-6">初回プロフィール登録</h2>
+
+    {% if messages %}
+      <ul class="mb-4">
+        {% for message in messages %}
+          <li class="text-sm text-red-600">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <form method="post" class="space-y-4">
+      {% csrf_token %}
+      <div>
+        <label class="block font-medium">ユーザー名（表示名）</label>
+        <input type="text" name="display_name" value="{{ initial.display_name }}" class="w-full border p-2 rounded-lg">
+      </div>
+
+      <div>
+        <label class="block font-medium">自己紹介</label>
+        <textarea name="bio" rows="3" class="w-full border p-2 rounded-lg">{{ initial.bio }}</textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block font-medium">身長 (cm)</label>
+          <input type="text" name="height_cm" value="{{ initial.height_cm }}" class="w-full border p-2 rounded-lg">
+        </div>
+        <div>
+          <label class="block font-medium">体重 (kg)</label>
+          <input type="text" name="weight_kg" value="{{ initial.weight_kg }}" class="w-full border p-2 rounded-lg">
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-medium">目標体重 (kg)</label>
+        <input type="text" name="target_weight" value="{{ initial.target_weight }}" class="w-full border p-2 rounded-lg">
+      </div>
+    <form action="{% url 'avatar_upload' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div id="upload-section">
+      {% unicorn 'avatar_upload' %}
+      <input type="file" name="image" accept="image/*" required>
+
+      <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg">
+        登録する
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

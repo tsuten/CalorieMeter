@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,9 +44,10 @@ INSTALLED_APPS = [
     'core',
     'calendars',
     'notifications',
-    'food_recognition',
+    'food_record',
+    'food_analysis',
     # 'users.first_login',
-]
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -125,12 +127,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    os.path.join(BASE_DIR, "static"),
 ]
 
 # Media files (user uploaded files)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -151,5 +153,5 @@ LOGOUT_REDIRECT_URL = "login"
 
 # Django Unicorn settings
 UNICORN = {
-    "APPS": ["components", "users"],
+    "APPS": ["components", "users", "food_record"],
 }
