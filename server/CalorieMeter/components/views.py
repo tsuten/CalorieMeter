@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from django.core.files.storage import default_storage
 from django.conf import settings
-from core.models import Meal
+# from core.models import Meal # 不使用
 from users.models import AuthAccount
 from users.decorator import login_required_check_user_profile
 # from .utils import classify_food_image

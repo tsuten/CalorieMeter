@@ -1,5 +1,7 @@
-import logging
+import logging, uuid, base64
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.files.base import ContentFile
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import FoodRecord
@@ -12,31 +14,60 @@ logger = logging.getLogger(__name__)
 ## 現況では不可
 @login_required
 def record_create(request):
+
     profile, created = UserProfile.objects.get_or_create(auth=request.user)
 
     if created:
         logger.info(f"Created new UserProfile for user {request.user.id}")
         
     if request.method == 'POST':
-        image_path = request.FILES.get('image_path')
         
         try:
-            FoodRecord.objects.create(
-                recorded_by=profile,   # UserProfile外部キー
-                description="",
-                image=image_path,
-                recorded_at=timezone.now(),
-            )
-            logger.info(f"FoodRecord created for {profile.id}")
-            # 成功後リロード & food_analysisのanalyze_record処理
-            return redirect('food_analysis:analyze_record', record_id=FoodRecord.objects.latest('id').id)
-        
-        
+            if "image_path" in request.FILES:
+                image_path = request.FILES['image_path']
+                # FoodRecord作成
+                food_record = FoodRecord.objects.create(
+                    recorded_by=profile,   # UserProfile外部キー
+                    description="",
+                    image=image_path,
+                    recorded_at=timezone.now(),
+                )
+                record_id=food_record.record_id
+                logger.info(f"FoodRecord created for {profile.id}")
+                # 成功後リロード & food_analysisのanalyze_record処理
+                return redirect('food_analysis:analyze_record', id=record_id)
+
+            
+            base64_image = request.POST.get("captured_image")
+
+            if base64_image:
+                format, imgstr = base64_image.split(';base64,') 
+                ext = format.split('/')[-1]
+                filename = f"{uuid.uuid4()}.{ext}"
+                img_data = ContentFile(base64.b64decode(imgstr), name=filename)
+
+                food_record = FoodRecord.objects.create(
+                    recorded_by=profile,   # UserProfile外部キー
+                    description="",
+                    image=img_data,
+                    recorded_at=timezone.now(),
+                )
+                record_id=food_record.record_id
+                logger.info(f"FoodRecord created for {profile.id} from base64 image")
+                
+                # 成功後リロード & food_analysisのanalyze_record処理
+                return redirect('food_analysis:analyze_record', id=record_id)
+
+            messages.error(request, "画像のアップロードに失敗しました。")
+            return redirect('upload')
+
         except Exception as e: # 例外処理(エラー発生時)
+            messages.error(request, f"食事記録中にエラーが発生しました。:{str(e)}")
             logger.error(f" Error saving FoodRecord: {e}")
-            return render(request, 'upload.html', {
-                'error': f"Error saving record: {e}"
-            })
+
+            return redirect('upload')
+        
+
 
     records = FoodRecord.objects.filter(recorded_by=profile).order_by('-recorded_at')
     return render(request, 'upload.html', {'records': records})
@@ -64,12 +95,7 @@ def record_list(request):
         'user_profile': user_profile,
     })
 
-
-@login_required
-def record_detail(request, record_id):
-    record = get_object_or_404(FoodRecord, pk=record_id)
-    return render(request, 'detail.html', {'record': record})
-
+# 以下、旧コード保存用(templates)
 
 
 # class UploadView(View):
