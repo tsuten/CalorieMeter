@@ -142,8 +142,9 @@ public
 .storybook-out
 
 # Temporary folders
-tmp/
-temp/
+# include temporary folders to git
+# tmp/
+# temp/
 
 # Logs
 logs

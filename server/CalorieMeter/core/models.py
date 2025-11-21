@@ -3,6 +3,16 @@ from django.conf import settings
 import enum
 from datetime import date
 import calendar
+import uuid
+from django.utils import timezone
+
+class BaseModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True, editable=False)
+
+    class Meta:
+        abstract = True
 
 class TimeEaten(models.TextChoices):
     breakfast = "朝食"
