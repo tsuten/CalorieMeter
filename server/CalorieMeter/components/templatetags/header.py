@@ -23,7 +23,7 @@ def header(context):
         }
 
     from food_record.models import UserProfile
-    user_profile = UserProfile.objects.filter(user_id=user.id).first()
+    user_profile = UserProfile.objects.filter(auth_id=user.id).first()
 
     notifications = (
         Notification.objects.filter(to_user=user)
