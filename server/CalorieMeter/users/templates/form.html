@@ -1,6 +1,15 @@
-{% extends "base.html" %}
 {% load static %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>初回ログイン設定</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
 <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
   <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
     <h2 class="text-2xl font-bold text-center mb-6">初回プロフィール登録</h2>
@@ -13,7 +22,7 @@
       </ul>
     {% endif %}
 
-    <form method="post" class="space-y-4">
+    <form action="{% url 'users:first_login_form' %}" method="post" enctype="multipart/form-data" class="flex flex-col items-center justify-center gap-2">
       {% csrf_token %}
       <div>
         <label class="block font-medium">ユーザー名（表示名）</label>
@@ -40,11 +49,13 @@
         <label class="block font-medium">目標体重 (kg)</label>
         <input type="text" name="target_weight" value="{{ initial.target_weight }}" class="w-full border p-2 rounded-lg">
       </div>
-    <form action="{% url 'avatar_upload' %}" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div id="upload-section">
-      {% unicorn 'avatar_upload' %}
-      <input type="file" name="image" accept="image/*" required>
+      <div>
+        <label class="block font-medium">プロフィール写真</label>
+          {% csrf_token %}
+          {% comment %} {% unicorn 'avatar_upload' %} {% endcomment %}
+          <input type="file" name="image" accept="image/*" class="form-control">
+
+      </div>
 
       <button type="submit" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg">
         登録する
@@ -52,4 +63,6 @@
     </form>
   </div>
 </div>
-{% endblock %}
+
+</body>
+</html>

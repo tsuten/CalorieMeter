@@ -9,7 +9,7 @@
                 {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary">更新</button>
-                    <button type="button" class="btn btn-secondary" onclick="location.href='{{ mypage_url }}'">マイページに戻る</button>
+                    <button type="button" class="btn btn-secondary" onclick="location.href='{{ index }}'">マイページに戻る</button>
             </form>
     <a href="{% url 'users:logout' %}">ログアウト</a>
 </div>

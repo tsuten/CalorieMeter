@@ -88,7 +88,18 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
+# Media files (user uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -121,23 +132,19 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-
-# Media files (user uploaded files)
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# セッション情報
+# 起動時にログイン画面に遷移 & ログアウト処理
+SESSION_COOKIE_AGE = 3600  
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True 
+
 
 # Login URL
 LOGIN_URL = 'users:login'
@@ -155,3 +162,16 @@ LOGOUT_REDIRECT_URL = "login"
 UNICORN = {
     "APPS": ["components", "users", "food_record"],
 }
+
+# AWSとの連携を記載
+'''
+s3やRDS(dbサービス名:dynamoDBなど)
+SageMaker(ML)については未定
+'''
+
+# Azureとの連携を記載
+'''
+主な役割: サーバー関連
+コンピューティング(インスタンス)など
+
+'''

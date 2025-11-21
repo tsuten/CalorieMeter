@@ -15,19 +15,19 @@ def analyze_food_image(image_path):
 
     if not results:
         return {
-            "predicted_food": "unknown",
+            "predicted_food_name": "unknown",
             "confidence": 0.0,
             "nutrients": estimate_nutrients("unknown")
         }
 
     top = results[0]
-    predicted_food = top["label"]
-    confidence = float(top["score"])
+    predicted_food_name = top["label"]
+    confidence = float(top["score"]) * 100
 
     return {
-        "predicted_food": predicted_food,
+        "predicted_food_name": predicted_food_name,
         "confidence": confidence,
-        "nutrients": estimate_nutrients(predicted_food)
+        "nutrients": estimate_nutrients(predicted_food_name)
     }
 
 
