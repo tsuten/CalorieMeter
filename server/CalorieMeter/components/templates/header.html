@@ -1,59 +1,66 @@
 {% load static %}
 
-<div class="header flex flex-row items-center justify-center gap-4 border-b border-gray-200 p-2">
-    <div class="flex-1 flex justify-start">
-        <div class="flex flex-row items-center gap-2 rounded-md p-2 hover:cursor-pointer hover:bg-gray-100 rounded-md transition-all duration-100">
-            <a href="/" class="text-reset text-decoration-none flex flex-row items-center gap-2">
+{% load static %}
+
+<header class="w-full border-b border-gray-200 bg-white">
+    <div class="mx-auto max-w-7xl flex flex-row items-center justify-between p-2">
+
+        <div class="flex items-center gap-2">
+            <a href="/" class="flex flex-row items-center gap-2 hover:bg-gray-100 p-2 rounded-md">
                 <img src="{% static 'img/logo.png' %}" alt="logo" class="w-8 h-8 rounded-full">
                 <span class="font-bold text-xl">CalorieMeter</span>
             </a>
         </div>
-    </div>
-    {% if user.is_authenticated %}
-    <div class="flex-1 flex justify-center gap-2">
-        {% for content in header_contents %}
-        <div class="">
-            <a href="{{ content.href }}" class="btn btn-light border border-gray-500">
-                <button class="flex flex-row items-center gap-2">
-                    <i data-lucide="{{ content.icon }}" class="w-4 h-4"></i>
-                    <span class="">{{ content.label_ja }}</span>
-                </button>
+
+
+        <!-- （ログイン時のみ） -->
+        {% if user.is_authenticated %}
+        <div class="flex items-center gap-2">
+            {% for content in header_contents %}
+            <a href="{{ content.href }}" class="btn btn-light border border-gray-500 flex items-center gap-2">
+                <i data-lucide="{{ content.icon }}" class="w-4 h-4"></i>
+                <span>{{ content.label_ja }}</span>
             </a>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-    <div class="flex-1 flex justify-end gap-2">
-        <a href="/upload" class="btn btn-light border border-gray-500">
-            <button class="flex flex-row items-center gap-2">
+
+
+        <div class="flex items-center gap-2">
+            <a href="/upload" class="btn btn-light border border-gray-500 flex flex-row items-center gap-2">
                 <i data-lucide="plus-circle" class="w-8 h-8"></i>
                 <span class="text-sm">Upload</span>
-            </button>
-        </a>
-        <dropdown class="dropdown-center">
-            <button class="flex flex-row items-center gap-2 hover:bg-gray-100 rounded-md hover:cursor-pointer p-2" data-bs-toggle="dropdown">
-                <i data-lucide="bell" class="w-8 h-8"></i>
-            </button>
-            <ul class="dropdown-menu">
-                {% for notification in notifications %}
-                <li><a class="dropdown-item" href="#">{{ notification.title }}</a></li>
-                {% endfor %}
-              </ul>
-        </dropdown>
-        <dropdown>
-            <button class="hover:bg-gray-100 rounded-full hover:cursor-pointer p-2" data-bs-toggle="dropdown">
-                {% if user_profile and user_profile.avatar %}
-                    <img src="{{ user_profile.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full">
-                {% else %}
-                    <div class="w-8 h-8 rounded-full bg-gray-200 border border-gray-300"></div>
-                {% endif %}
-            </button>
+            </a>
 
-            <ul class="dropdown-menu">
-                <li><h6 class="dropdown-header">アカウント</h6></li>
-                <li><a class="dropdown-item" href="{% url 'users:profile' %}">マイページ</a></li>
-                <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">ログアウト</button></li>
-            </ul>
-        </dropdown>
+            <!-- Notification -->
+            <dropdown class="dropdown-center">
+                <button class="flex items-center hover:bg-gray-100 rounded-md p-2" data-bs-toggle="dropdown">
+                    <i data-lucide="bell" class="w-8 h-8"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    {% for notification in notifications %}
+                    <li><a class="dropdown-item" href="#">{{ notification.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </dropdown>
+
+            <!-- Avatar -->
+            <dropdown>
+                <button class="hover:bg-gray-100 rounded-full p-2" data-bs-toggle="dropdown">
+                    {% if user_profile and user_profile.avatar %}
+                        <img src="{{ user_profile.avatar.url }}" alt="avatar" class="w-8 h-8 rounded-full">
+                    {% else %}
+                        <div class="w-8 h-8 rounded-full bg-gray-200 border"></div>
+                    {% endif %}
+                </button>
+
+                <ul class="dropdown-menu">
+                    <li><h6 class="dropdown-header">アカウント</h6></li>
+                    <li><a class="dropdown-item" href="{% url 'users:profile' %}">マイページ</a></li>
+                    <li><button class="dropdown-item" data-bs-toggle="modal" data-bs-target="#logoutModal">ログアウト</button></li>
+                </ul>
+            </dropdown>
+        </div>
+
     </div>
 
 <!-- Logout Modal -->
@@ -90,3 +97,5 @@
 </script>
 
 {% endif %}
+
+</header>
