@@ -33,13 +33,14 @@ def check(request):
     _get_or_create_onboarding_status(request.user)
     if _needs_onboarding(request.user):
         return redirect("users:first_login_form")
-    return redirect("users:mypage")
+    return redirect("index")
 
 
 @login_required
 @require_http_methods(["GET", "POST"])
 def form(request):
     user = request.user
+    print(user)
     profile = _get_or_create_profile(user)
     status = _get_or_create_onboarding_status(user)
 
@@ -79,7 +80,7 @@ def form(request):
         if errors:
             for e in errors:
                 messages.error(request, e)
-            return render(request, "first_login/form.html", {
+            return render(request, "form.html", {
                 "initial": {
                     "display_name": display_name,
                     "avatar": avatar,
@@ -105,7 +106,7 @@ def form(request):
         status.save(update_fields=["is_completed", "completed_at"])
 
         messages.success(request, "初回登録が完了しました。")
-        return redirect("users:mypage")
+        return redirect("index")
 
     # --- GET ---
     return render(request, "form.html", {

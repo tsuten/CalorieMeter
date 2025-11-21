@@ -15,10 +15,10 @@
 
       <dl>
         <dt>推定食品</dt>
-        <dd>{{ analysis.predicted_food }}</dd>
+        <dd>{{ analysis.predicted_food_name }}</dd>
 
-        <dt>信頼度</dt>
-        <dd>{{ analysis.confidence|floatformat:2 }}</dd>
+        <dt>信頼度</dt> {% comment %} 信頼度は0~100(%) {% endcomment %}
+        <dd>{{analysis.confidence|floatformat:2}} (%)</dd>
 
         <dt>解析日時</dt>
         <dd>{% if analysis.analyzed_at %}{{ analysis.analyzed_at }}{% else %}-{% endif %}</dd>
@@ -29,7 +29,7 @@
         <thead>
           <tr>
             <th>栄養素</th>
-            <th>値</th>
+            <th>値 (g) </th>
           </tr>
         </thead>
         <tbody>

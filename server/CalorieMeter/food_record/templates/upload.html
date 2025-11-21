@@ -1,12 +1,18 @@
 {% extends "base.html" %}
 {% load unicorn %}
 {% block content %}
-{% csrf_token %}
 
 <style>
     .hidden { display: none; }
 </style>
 
+{% csrf_token %}
+<header>
+<a href="{% url 'food_record:meal_info' %}" class="btn btn-link mb-4">
+    <i data-lucide="arrow-left" class="inline-block w-4 h-4 mr-1" style="stroke-width: 1.0;"></i>
+    食事履歴に戻る
+</a>
+</header>
 <div class="">
     <h1>食事を記録する</h1>
 
@@ -19,12 +25,23 @@
     </div>
 
     <!-- アップロードモード -->
+    {% comment %} アップロードエラーの際はエラーを表示 {% endcomment %}
+    <!-- エラー表示 -->
+    {% if messages %}
+    <div class="mx-64 mb-3">
+        {% for message in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div id="uploadMode" class="flex flex-col items-center justify-center h-128 border border-gray-200 rounded-md p-4 mx-64">
         <i data-lucide="upload" class="w-32 h-32 text-gray-500" style="stroke-width: 1.0;"></i>
         <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data" class="flex flex-col items-center justify-center gap-2">
             {% csrf_token %}
-            <input type="file" name="image_path" accept="image/*" class="form-control">
-            <button type="submit" class="btn btn-primary form-control">アップロード</button>
+            <input type="file" name="image_path" accept="image/*" class="form-control" required>
+            <button type="submit" class="btn btn-primary form-control">アップロード・解析</button>
         </form>
     </div>
 
@@ -32,43 +49,63 @@
     <div id="cameraMode" class="hidden flex flex-col items-center justify-center h-128 border border-gray-200 rounded-md p-4 mx-64">
         <video id="webcam" autoplay playsinline width="320" height="240"></video>
         <canvas id="canvas" style="display: none;"></canvas>
+
         <div class="flex gap-2 mt-2">
-            <button id="startButton" class="btn btn-success">開始</button>
-            <button id="stopButton" class="btn btn-danger">停止</button>
-            <button id="captureButton" class="btn btn-primary">キャプチャ</button>
+                    <button id="startButton" class="btn btn-success">開始</button>
+                    <button id="stopButton" class="btn btn-danger">停止</button>
+                    <button id="captureButton" class="btn btn-primary">キャプチャ</button>
         </div>
+        <!-- 画像送信用 hidden input（Base64 を送信したい場合） -->
+        <form action="{% url 'upload' %}" method="post" id="cameraForm" class="hidden">
+            {% csrf_token %}
+            <input type="hidden" id="capturedImage" name="captured_image">
+        </form>
+
         <div id="imagePreview" style="display: none;" class="mt-4">
             <h3>撮影プレビュー:</h3>
             <img id="previewImg" src="" alt="プレビュー" class="max-w-md rounded-lg shadow-lg">
         </div>
-    </div>
-</div>
+
+        <button id="submitCapture" class="btn btn-primary hidden mt-3">この写真で解析する</button>
+            </div>
+        </div>
 
 <!-- 過去の食事履歴 -->
 <div class="container my-4">
     <h2 class="h5 mb-3">過去の食事</h2>
+
     <ul class="list-group">
-        {% for meal in meals %}
+        {% for record in food_record %}
         <li class="list-group-item">
             <div class="d-flex align-items-center gap-3">
-                <img src="{{ meal.image.url }}" alt="{{ meal.name }}" class="rounded" style="width:64px;height:64px;object-fit:cover;">
+                <img src="{{ record.image.url }}" alt="{{ record.id }}" class="rounded" style="width:64px;height:64px;object-fit:cover;">
+                
                 <div class="flex-grow-1">
-                    <div class="fw-semibold">{{ meal.name }}</div>
-                    <div class="d-flex justify-content-between align-items-center mt-1">
-                        <div class="text-muted small d-flex align-items-center gap-2">
-                            {{ meal.date_eaten|default:"" }} {{ meal.time_eaten|default:"" }}
-                        </div>
+                
+                    <div class="fw-semibold">{{ record.id }}</div>
+                        <div class="d-flex justify-content-between align-items-center mt-1">
+                            <div class="text-muted small d-flex align-items-center gap-2">
+                                {{ record.recorded_at|date:"Y/m/d H:i"|default:"" }}
+                            </div>
+
                         <div class="d-flex align-items-center gap-2">
-                            {% if meal.calorie %}
-                            <span class="badge text-bg-light">{{ meal.calorie }} kcal</span>
+                            {% if record.calorie %}
+                                <span class="badge text-bg-light">{{ record.calorie }} kcal</span>
                             {% endif %}
-                            {% if meal.memo %}
-                            <span class="text-muted small text-truncate" style="max-width: 240px;">{{ meal.memo }}</span>
+
+                            {% if record.description %}
+                                <span class="text-muted small text-truncate"
+                                    data-toggle="tooltip"
+                                    title="{{ record.description }}"
+                                    style="max-width: 240px;">
+                                    {{ record.description }}
+                                </span>
                             {% endif %}
                         </div>
                     </div>
+
                 </div>
-                <a href="/meal-info/{{ meal.id|default:0 }}" class="btn btn-sm btn-outline-secondary">詳細</a>
+                <a href="{% url 'meal_info' record.id %}" class="btn btn-sm btn-outline-secondary">詳細</a>
             </div>
         </li>
         {% empty %}
@@ -77,6 +114,8 @@
     </ul>
 </div>
 
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/webcam-easy@1.1.1/dist/webcam-easy.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -91,41 +130,61 @@ document.addEventListener('DOMContentLoaded', function() {
     const canvasElement = document.getElementById('canvas');
     const webcam = new Webcam(webcamElement, 'user', canvasElement);
 
-    // 切替（アップロード）
-    uploadModeBtn.addEventListener('click', () => {
-        uploadMode.style.display = 'flex';
-        cameraMode.style.display = 'none';
-        uploadModeBtn.classList.add('btn-primary');
-        uploadModeBtn.classList.remove('btn-outline-primary');
-        cameraModeBtn.classList.remove('btn-primary');
-        cameraModeBtn.classList.add('btn-outline-primary');
-        webcam.stop();
-    });
+    let isCameraActive = false;
 
-    // モード切替（カメラ）
-    cameraModeBtn.addEventListener('click', () => {
-        uploadMode.style.display = 'none';
-        cameraMode.style.display = 'flex';
-        cameraModeBtn.classList.add('btn-primary');
-        cameraModeBtn.classList.remove('btn-outline-primary');
-        uploadModeBtn.classList.remove('btn-primary');
-        uploadModeBtn.classList.add('btn-outline-primary');
-    });
+    /* ===========================
+     * モード切り替え
+     * =========================== */
+    function switchMode(isUpload) {
+        uploadMode.style.display = isUpload ? 'flex' : 'none';
+        cameraMode.style.display = isUpload ? 'none' : 'flex';
 
-    // カメラ操作
+        uploadModeBtn.classList.toggle('btn-primary', isUpload);
+        uploadModeBtn.classList.toggle('btn-outline-primary', !isUpload);
+
+        cameraModeBtn.classList.toggle('btn-primary', !isUpload);
+        cameraModeBtn.classList.toggle('btn-outline-primary', isUpload);
+
+        if (isUpload) {
+            webcam.stop();
+            isCameraActive = false;
+        }
+    }
+
+    uploadModeBtn.addEventListener('click', () => switchMode(true));
+    cameraModeBtn.addEventListener('click', () => switchMode(false));
+
+ /* ===========================
+     * カメラ操作
+     * =========================== */
     document.getElementById('startButton').addEventListener('click', async () => {
-        await webcam.start();
+        if (!isCameraActive) {
+            await webcam.start();
+            isCameraActive = true;
+        }
     });
 
     document.getElementById('stopButton').addEventListener('click', () => {
         webcam.stop();
+        isCameraActive = false;
     });
 
     document.getElementById('captureButton').addEventListener('click', () => {
         const result = webcam.snap();
         document.getElementById('previewImg').src = result;
         document.getElementById('imagePreview').style.display = 'block';
+
+        document.getElementById('capturedImage').value = result;
+        document.getElementById('submitCapture').classList.remove('hidden');
     });
+
+    /* ===========================
+     * Base64 送信（必要な場合）
+     * =========================== */
+    document.getElementById('submitCapture').addEventListener('click', () => {
+        document.getElementById('cameraForm').submit();
+    });
+
 });
 </script>
 

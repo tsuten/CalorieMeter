@@ -9,11 +9,12 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from django.db import IntegrityError
 from django.shortcuts import render, redirect
+from users.models import UserProfile, OnboardingStatus, AuthAccount
+from django.urls import reverse
+
 
 AuthAccount = get_user_model()
 
-def index(request):  # ログアウト時に遷移
-    return render(request, "index.html")
 
 @require_http_methods(["GET", "POST"])
 def register(request):
@@ -53,51 +54,79 @@ def register(request):
             request.session["first_login_profile_display_name"] = display_name
 
         messages.success(request, "登録しました。")
-        return redirect("/")
+        return redirect("users:first_login_check")
 
 
     return render(request, "register.html")
 
 
-@login_required
-def mypage(request):
-    return render(request, "mypage.html")
+# @login_required
+# def mypage(request):
+#     return render(request, "mypage.html")
 
 
 @login_required
 def profile(request):
-    from users.models import UserProfile
-    from django.urls import reverse
     
     try:
         user_profile = UserProfile.objects.get(auth=request.user)
     except UserProfile.DoesNotExist:
         user_profile = None
+        return redirect("users:login")
     
-    mypage_url = reverse("users:mypage")
+    index_url = reverse("index")
     return render(request, "profile.html", {
         "profile": user_profile,
-        "mypage_url": mypage_url,
+        "index_url": index_url,
     })
 
 @require_http_methods(["GET", "POST"])
 def login_view(request):
-    if request.user.is_authenticated:
-        return redirect("users:mypage")
 
     if request.method == "POST":
         email = (request.POST.get("email") or "").strip().lower()
         password = request.POST.get("password") or ""
 
         user = authenticate(request, username=email, password=password)
+        print("認証結果:", user)
         if user is not None:
             auth_login(request, user)
-            next_url = request.GET.get("next") or request.POST.get("next") or "/"
-            return redirect(next_url)
+            is_admin = user.is_superuser
+            print("is_admin:", is_admin)
+               
+            if is_admin == True:
+                    print("管理者ログイン処理")
+                    auth_login(request, user)
+                    return redirect("index")
+
+            else: # 通常ログイン処理
+                pass
+
+            try:
+                status = OnboardingStatus.objects.get(user=user)
+                print("オンボーディングステータス取得:", status)
+                
+            except OnboardingStatus.DoesNotExist:
+                status = None
+                is_admin = False
+                # indexへリダイレクト
+
+            if status.is_completed==False:
+                print("初回ログイン未完了リダイレクト")
+                return redirect("users:first_login_form")
+            
+            elif status.is_completed==True:
+                print("通常ログイン処理")
+                auth_login(request, user)
+                next_url = request.GET.get("next") or request.POST.get("next") or "/"
+                return redirect(next_url)
+
 
         messages.error(request, "メールアドレスまたはパスワードが正しくありません。")
 
-    return render(request, "login.html")
+
+    # print("通常ログイン画面表示:", request.method, status)
+    return render(request, "login.html") # messagesも渡したい
 
 
 @login_required

@@ -1,7 +1,6 @@
 # Create your models here.
 from django.db import models
 from  users.models import UserProfile
-from django.db import models
 import os
 import uuid
 
@@ -18,12 +17,12 @@ class FoodRecord(models.Model):
     """
     食品記録モデル。
     nutrients フィールドには、{"protein": 10.5, "fat": 5.2, "carbs": 20.1} のような
-    栄養素名をキー、含有量（float）を値とする JSON データを格納します。
+    栄養素名をキー、含有量（float）を値とする JSON データで格納
     """
     record_id = models.AutoField(primary_key=True)
     recorded_by = models.ForeignKey(
         UserProfile,
-        to_field='id',             # ← user_idを外部キーに指定
+        to_field='id',
         db_column='id',
         on_delete=models.CASCADE,
         related_name="food_records"
