@@ -1,4 +1,3 @@
-
 from django.apps import AppConfig
 
 class FoodAnalysisConfig(AppConfig):

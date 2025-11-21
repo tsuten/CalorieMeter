@@ -1,7 +1,6 @@
 
 from django.test import TestCase
-from .services import fallback_classifier, estimate_nutrition, generate_suggestions
-
+from .services import fallback_classifier, estimate_nutrition
 class FoodServiceTest(TestCase):
     def test_fallback_classifier(self):
         b = b"dummydata"

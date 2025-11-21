@@ -91,7 +91,8 @@ class AuthAccount(AbstractBaseUser):
         verbose_name_plural = "認証アカウント"
 
     def __str__(self):
-        return self.email
+        is_admin = " (admin)" if self.is_superuser else ""
+        return self.email + is_admin
 
     # Admin/権限用のメソッド　djangoの仕様で必須
     def has_perm(self, perm, obj=None):
