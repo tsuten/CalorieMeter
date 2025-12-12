@@ -1,172 +1,125 @@
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Group, Title, Paper, Avatar, Tabs, Stack } from '@mantine/core'
+import { pageRoutes } from '../App'
+import HomeIcon from '@mui/icons-material/Home'
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth'
+import EditNoteIcon from '@mui/icons-material/EditNote'
+import BarChartIcon from '@mui/icons-material/BarChart'
+import PersonIcon from '@mui/icons-material/Person'
+import SettingsIcon from '@mui/icons-material/Settings'
+import InfoIcon from '@mui/icons-material/Info'
+
+// ルート情報のマッピング
+const routeConfig = {
+  '/': {
+    label: 'ホーム',
+    icon: HomeIcon
+  },
+  '/calendar': {
+    label: 'カレンダー',
+    icon: CalendarMonthIcon
+  },
+  '/record': {
+    label: '記録',
+    icon: EditNoteIcon
+  },
+  '/statistics': {
+    label: '統計',
+    icon: BarChartIcon
+  },
+  '/profile': {
+    label: 'プロフィール',
+    icon: PersonIcon
+  },
+  '/settings': {
+    label: '設定',
+    icon: SettingsIcon
+  },
+  '/about': {
+    label: 'About',
+    icon: InfoIcon
+  }
+}
 
 function Header() {
   const location = useLocation()
+  const navigate = useNavigate()
 
   return (
-    <>
-      <style>{`
-        .header {
-          width: 100%;
-          background-color: rgba(26, 26, 26, 0.8);
-          backdrop-filter: blur(10px);
-          border-bottom: 1px solid rgba(100, 108, 255, 0.2);
-          padding: 1rem 2rem;
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          z-index: 1000;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-container {
-          max-width: 1280px;
-          margin: 0 auto;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 2rem;
-        }
-
-        .header-title {
-          font-size: 1.8rem;
-          font-weight: 600;
-          margin: 0;
-          background: linear-gradient(135deg, #646cff 0%, #535bf2 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        .header-title-link {
-          text-decoration: none;
-        }
-
-        .header-nav {
-          display: flex;
-          gap: 1.5rem;
-          align-items: center;
-        }
-
-        .nav-link {
-          color: rgba(255, 255, 255, 0.87);
-          text-decoration: none;
-          font-weight: 500;
-          padding: 0.5rem 1rem;
-          border-radius: 6px;
-          transition: all 0.2s ease;
-        }
-
-        .nav-link:hover {
-          color: #646cff;
-          background-color: rgba(100, 108, 255, 0.1);
-        }
-
-        .nav-link.active {
-          color: #646cff;
-          background-color: rgba(100, 108, 255, 0.2);
-        }
-
-        @media (prefers-color-scheme: light) {
-          .header {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-bottom-color: rgba(100, 108, 255, 0.2);
-          }
-
-          .nav-link {
-            color: #213547;
-          }
-
-          .nav-link:hover {
-            color: #535bf2;
-            background-color: rgba(100, 108, 255, 0.1);
-          }
-
-          .nav-link.active {
-            color: #535bf2;
-            background-color: rgba(100, 108, 255, 0.2);
-          }
-        }
-
-        @media (max-width: 768px) {
-          .header {
-            padding: 1rem;
-          }
-
-          .header-container {
-            flex-direction: column;
-            gap: 1rem;
-          }
-
-          .header-title {
-            font-size: 1.5rem;
-          }
-
-          .header-nav {
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-          }
-
-          .nav-link {
-            font-size: 0.9rem;
-            padding: 0.4rem 0.8rem;
-          }
-        }
-      `}</style>
-      <header className="header">
-        <div className="header-container">
-          <Link to="/" className="header-title-link">
-            <h1 className="header-title">CalorieMeter</h1>
+    <Paper
+      component="header"
+      shadow="none"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        borderRadius: 0,
+      }}
+    >
+      <Stack
+        gap="md"
+        style={{
+          maxWidth: '1280px',
+          width: '100%',
+          margin: '0 auto',
+          padding: '1rem 1.5rem',
+        }}
+      >
+        {/* 上の列: ロゴとAvatar */}
+        <Group
+          justify="space-between"
+          align="center"
+        >
+          <Link
+            to="/"
+            style={{
+              textDecoration: 'none',
+              color: 'inherit',
+            }}
+          >
+            <Title order={3} style={{ margin: 0 }}>
+              CalorieMeter
+            </Title>
           </Link>
-          <nav className="header-nav">
-            <Link 
-              to="/" 
-              className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-            >
-              ホーム
-            </Link>
-            <Link 
-              to="/calendar" 
-              className={`nav-link ${location.pathname === '/calendar' ? 'active' : ''}`}
-            >
-              カレンダー
-            </Link>
-            <Link 
-              to="/record" 
-              className={`nav-link ${location.pathname === '/record' ? 'active' : ''}`}
-            >
-              記録
-            </Link>
-            <Link 
-              to="/statistics" 
-              className={`nav-link ${location.pathname === '/statistics' ? 'active' : ''}`}
-            >
-              統計
-            </Link>
-            <Link 
-              to="/profile" 
-              className={`nav-link ${location.pathname === '/profile' ? 'active' : ''}`}
-            >
-              プロフィール
-            </Link>
-            <Link 
-              to="/settings" 
-              className={`nav-link ${location.pathname === '/settings' ? 'active' : ''}`}
-            >
-              設定
-            </Link>
-            <Link 
-              to="/about" 
-              className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}
-            >
-              About
-            </Link>
-          </nav>
-        </div>
-      </header>
-    </>
+          <Avatar
+            component={Link}
+            to="/profile"
+            radius="xl"
+            color="blue"
+          >
+            <PersonIcon />
+          </Avatar>
+        </Group>
+        
+        {/* 下の列: Tabs */}
+        <Tabs
+          value={location.pathname}
+          onChange={(value) => navigate(value || '/')}
+          variant="outline"
+          style={{
+            position: 'relative',
+            top: '-3rem',
+          }}
+        >
+          <Tabs.List justify="center">
+            {pageRoutes.map((route) => {
+              const { label, icon: Icon } = routeConfig[route]
+              return (
+                <Tabs.Tab
+                  key={route}
+                  value={route}
+                  leftSection={<Icon fontSize="small" />}
+                >
+                  {label}
+                </Tabs.Tab>
+              )
+            })}
+          </Tabs.List>
+        </Tabs>
+      </Stack>
+    </Paper>
   )
 }
 

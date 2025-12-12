@@ -58,9 +58,14 @@ function App() {
     <>
       <style>{`
         .app-container {
-          padding-top: 80px;
+          padding-top: 64px;
           overflow-x: hidden;
           position: relative;
+          max-width: 1280px;
+          width: 100%;
+          margin: 0 auto;
+          padding-left: 1.5rem;
+          padding-right: 1.5rem;
         }
       `}</style>
       <Header />
