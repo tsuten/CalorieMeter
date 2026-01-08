@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* FullCalendarのカスタムスタイリング */
+    #calendar {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    
+    .fc {
+        border-radius: 0.75rem;
+        overflow: hidden;
+    }
+    
+    .fc-toolbar-title {
+        font-size: 1.75rem !important;
+        font-weight: 700 !important;
+        color: #1f2937;
+    }
+    
+    .fc-button {
+        background-color: #3b82f6 !important;
+        border: none !important;
+        border-radius: 0.5rem !important;
+        padding: 0.5rem 1rem !important;
+        font-weight: 500 !important;
+        transition: all 0.2s !important;
+    }
+    
+    .fc-button:hover {
+        background-color: #2563eb !important;
+        transform: translateY(-1px);
+    }
+    
+    .fc-button:active {
+        background-color: #1d4ed8 !important;
+    }
+    
+    .fc-button-primary:disabled {
+        background-color: #9ca3af !important;
+        opacity: 0.6;
+    }
+    
+    .fc-col-header-cell {
+        background-color: #f3f4f6 !important;
+        font-weight: 600 !important;
+        color: #4b5563 !important;
+        padding: 1rem 0.5rem !important;
+        border-color: #e5e7eb !important;
+    }
+    
+    .fc-daygrid-day {
+        transition: background-color 0.2s;
+    }
+    
+    .fc-daygrid-day:hover {
+        background-color: #f9fafb;
+    }
+    
+    .fc-daygrid-day-number {
+        color: #374151 !important;
+        font-weight: 500 !important;
+        padding: 0.5rem !important;
+    }
+    
+    .fc-day-today {
+        background-color: #dbeafe !important;
+    }
+    
+    .fc-day-today .fc-daygrid-day-number {
+        color: #1e40af !important;
+        font-weight: 700 !important;
+    }
+    
+    .fc-event {
+        border-radius: 0.375rem !important;
+        border: none !important;
+        padding: 0.25rem 0.5rem !important;
+        font-weight: 500 !important;
+    }
+    
+    .fc-daygrid-event {
+        margin: 2px 4px !important;
+    }
+    
+    .fc-scrollgrid {
+        border-color: #e5e7eb !important;
+        border-radius: 0.75rem;
+    }
+    
+    .fc-scrollgrid td, .fc-scrollgrid th {
+        border-color: #e5e7eb !important;
+    }
+</style>
+
+<!-- グラデーション背景とコンテナ -->
+<div class="py-8 px-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- ヘッダーセクション -->
+        <div class="mb-8 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2 flex items-center justify-start gap-3">
+                <i data-lucide="calendar-days" class="w-10 h-10"></i>
+                カレンダー
+            </h1>
+        </div>
+        
+        <!-- カレンダーコンテナ -->
+        <div class="p-6 md:p-8 card">
+            <div id='calendar'></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'ja',
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,dayGridWeek,dayGridDay'
+      },
+      buttonText: {
+        today: '今日',
+        month: '月',
+        week: '週',
+        day: '日'
+      },
+      height: 'auto',
+      // サンプルイベント（実際のデータと置き換えてください）
+      events: [
+        {
+          title: '朝食 🍳',
+          start: '2025-10-15',
+          color: '#10b981'
+        },
+        {
+          title: '昼食 🍜',
+          start: '2025-10-15',
+          color: '#f59e0b'
+        },
+        {
+          title: '夕食 🍖',
+          start: '2025-10-15',
+          color: '#8b5cf6'
+        },
+        {
+          title: '朝食 🥐',
+          start: '2025-10-20',
+          color: '#10b981'
+        }
+      ],
+      eventClick: function(info) {
+        alert('食事: ' + info.event.title);
+      }
+    });
+    calendar.render();
+  });
+</script>
+{% endblock %}
