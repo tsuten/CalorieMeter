@@ -1,0 +1,45 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'' テンプレート（仮定値）
+
+class User {
+  +id
+  +username
+  +email
+}
+
+class Meal {
+  +id
+  +meal_date
+  +meal_time
+  +created_at
+}
+
+class MealImage {
+  +id
+  +image_path
+  +uploaded_at
+}
+
+class FoodPrediction {
+  +id
+  +food_name
+  +confidence
+  +source
+}
+
+class Nutrition {
+  +id
+  +calories
+  +protein
+  +fat
+  +carbohydrate
+}
+
+User "1" -- "0..*" Meal : owns
+Meal "1" -- "1" MealImage : has
+Meal "1" -- "0..*" FoodPrediction : generates
+FoodPrediction "1" -- "1" Nutrition : maps to
+
+@enduml

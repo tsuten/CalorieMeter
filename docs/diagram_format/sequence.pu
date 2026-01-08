@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant "Django View" as View
+participant "ImageAnalysisService" as Service
+participant "Hugging Face\nFood API" as HFAPI
+database DB
+
+User -> View : 食事写真をアップロード
+View -> DB : Meal 作成
+DB --> View : Meal ID
+
+View -> DB : MealImage 保存
+DB --> View : OK
+
+View -> Service : 画像解析リクエスト(MealImage)
+Service -> HFAPI : 画像送信
+HFAPI --> Service : 食品名 + 信頼度
+
+Service -> Service : カロリー算出
+Service -> DB : FoodPrediction 保存
+Service -> DB : Nutrition 保存
+
+DB --> Service : OK
+Service --> View : 解析結果
+
+View --> User : 解析完了画面表示
+@enduml

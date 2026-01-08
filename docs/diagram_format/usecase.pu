@@ -1,0 +1,27 @@
+@startuml
+left to right direction
+
+actor "一般ユーザー" as User
+actor "外部API(Hugging Face)" as API
+
+
+rectangle "CalorieMeter" {
+
+  User --> (ログイン)
+  User --> (ログアウト)
+
+  User --> (食事写真をアップロード)
+  (食事写真をアップロード) --> (食事画像を解析)
+
+  (食事画像を解析) --> API
+
+  (食事画像を解析) --> (カロリーを算出)
+  (カロリーを算出) --> (食事記録を保存)
+
+  User --> (食事記録を保存)
+
+  User --> (カレンダーで食事記録を閲覧)
+  User --> (食事詳細を確認)
+}
+
+@enduml
