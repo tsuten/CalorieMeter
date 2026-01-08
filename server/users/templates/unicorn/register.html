@@ -1,0 +1,22 @@
+{% load static %}
+{% load unicorn %}
+<div>
+    <form method="post" action="{% url 'users:register' %}" enctype="multipart/form-data" class="flex flex-col items-center justify-center gap-2">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_email" class="form-label">メールアドレス</label>
+            <input type="email" class="form-control" id="id_email" name="email" required placeholder="you@example.com" unicorn:model="email">
+        </div>
+        <div class="mb-3">
+            <label for="id_password1" class="form-label">パスワード</label>
+            <input type="password" class="form-control" id="id_password1" name="password1" required unicorn:model.debounce-1000ms="password1">
+        </div>
+        {% if is_password1_put %}
+            <div class="mb-3">
+                <label for="id_password2" class="form-label">パスワード（確認）</label>
+                <input type="password" class="form-control" id="id_password2" name="password2" required unicorn:model="password2">
+            </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary" unicorn:click="register">登録</button>
+    </form>
+</div>
