@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 
-
+# アバター写真の保存先パス　権限なく登録できず
 def avatar_upload_path(instance, filename):
     """
     アバター画像の保存先
@@ -91,7 +91,8 @@ class AuthAccount(AbstractBaseUser):
         verbose_name_plural = "認証アカウント"
 
     def __str__(self):
-        return self.email
+        is_admin = " (admin)" if self.is_superuser else ""
+        return self.email + is_admin
 
     # Admin/権限用のメソッド　djangoの仕様で必須
     def has_perm(self, perm, obj=None):

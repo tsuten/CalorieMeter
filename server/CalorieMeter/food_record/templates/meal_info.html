@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container my-5">
+    <!-- ヘッダー部分 -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="text-3xl font-bold text-gray-800">食事の詳細</h1>
+                {% comment %} <div>
+                    <button class="btn btn-outline-primary me-2">
+                        <i data-lucide="edit-2" class="inline-block w-4 h-4"></i>
+                        編集
+                    </button>
+                    <button class="btn btn-outline-danger">
+                        <i data-lucide="trash-2" class="inline-block w-4 h-4"></i>
+                        削除
+                    </button>
+                </div> {% endcomment %}
+            </div>
+            <p class="text-muted mt-2 flex items-center gap-2">
+                <i data-lucide="calendar" class="inline-block w-4 h-4"></i>
+                <span>{{ meal.date_eaten }}</span>
+                <span class="badge bg-success">{{ meal.time_eaten }}</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- メインコンテンツ -->
+    <div class="row">
+        <!-- 左側: 画像とメモ -->
+        <div class="col-lg-8 mb-4">
+            <!-- 食事画像 -->
+            <div class="card mb-4">
+                <div class="card-body p-0">
+                    <img src="{{ meal.image.url }}" 
+                         alt="食事画像" 
+                         class="w-full rounded-lg object-cover"
+                         style="max-height: 500px; width: 100%; object-fit: contain;">
+                </div>
+            </div>
+
+            <!-- メモ欄 -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 flex items-center">
+                        <i data-lucide="file-text" class="inline-block w-5 h-5 me-2"></i>
+                        メモ
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-gray-700">
+                        {{ memo }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- 食品リスト -->
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 flex items-center">
+                        <i data-lucide="list" class="inline-block w-5 h-5 me-2"></i>
+                        食品リスト
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 font-semibold">サーモン刺身</h6>
+                                <small class="text-muted">150g</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">234 kcal</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 font-semibold">ご飯</h6>
+                                <small class="text-muted">200g</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">336 kcal</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 font-semibold">味噌汁</h6>
+                                <small class="text-muted">1杯</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">40 kcal</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1 font-semibold">ポン酢</h6>
+                                <small class="text-muted">20ml</small>
+                            </div>
+                            <span class="badge bg-primary rounded-pill">10 kcal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右側: 栄養情報 -->
+        <div class="col-lg-4">
+            <!-- カロリーサマリー -->
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <h5 class="text-muted mb-2">総カロリー</h5>
+                    <h1 class="display-4 font-bold text-primary mb-0">{{ meal.calorie }}</h1>
+                    <p class="text-muted">kcal</p>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 31%" aria-valuenow="31" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <small class="text-muted mt-2 d-block">目標の{{ calorie_percentage }}% ({{ target_calorie }}kcal)</small>
+                </div>
+            </div>
+
+            <!-- マクロ栄養素 -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 flex items-center">
+                        <i data-lucide="pie-chart" class="inline-block w-5 h-5 me-2"></i>
+                        マクロ栄養素
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- タンパク質 -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="font-semibold flex items-center">
+                                <span class="inline-block w-3 h-3 bg-danger rounded-circle me-2"></span>
+                                タンパク質
+                            </span>
+                            <span class="font-bold text-danger">35.2g</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">目標: 80g</small>
+                    </div>
+
+                    <!-- 炭水化物 -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="font-semibold flex items-center">
+                                <span class="inline-block w-3 h-3 bg-warning rounded-circle me-2"></span>
+                                炭水化物
+                            </span>
+                            <span class="font-bold text-warning">78.5g</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">目標: 200g</small>
+                    </div>
+
+                    <!-- 脂質 -->
+                    <div class="mb-0">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="font-semibold flex items-center">
+                                <span class="inline-block w-3 h-3 bg-info rounded-circle me-2"></span>
+                                脂質
+                            </span>
+                            <span class="font-bold text-info">15.8g</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: 28%" aria-valuenow="28" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <small class="text-muted">目標: 55g</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- その他の栄養素 -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0 flex items-center">
+                        <i data-lucide="activity" class="inline-block w-5 h-5 me-2"></i>
+                        その他の栄養素
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <span class="text-gray-700">食物繊維</span>
+                        <span class="font-semibold">3.2g</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <span class="text-gray-700">ナトリウム</span>
+                        <span class="font-semibold">1.8g</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <span class="text-gray-700">カルシウム</span>
+                        <span class="font-semibold">120mg</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <span class="text-gray-700">鉄分</span>
+                        <span class="font-semibold">2.1mg</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-0">
+                        <span class="text-gray-700">ビタミンC</span>
+                        <span class="font-semibold">15mg</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
+{% endblock %}

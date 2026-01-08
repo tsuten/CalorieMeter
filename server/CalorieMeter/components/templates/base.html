@@ -13,8 +13,11 @@
     {% unicorn_scripts %}
 </head>
 <body>
-    {% header %}
-    {% block content %}{% endblock %}
-    {% csrf_token %}
+    {% if user.is_authenticated %}
+        {% header %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
 </body>
 </html>

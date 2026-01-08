@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from core.models import Meal
 from datetime import date
 # Create your views here.
-# @login_required
+@login_required
 def calendar_view(request):
     return render(request, 'calendar.html')
 

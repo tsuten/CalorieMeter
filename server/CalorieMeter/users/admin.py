@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import AuthAccount, UserProfile , OnboardingStatus
-
+from .models import AuthAccount, UserProfile, OnboardingStatus
 
 @admin.register(AuthAccount)
 class AuthAccountAdmin(admin.ModelAdmin):
